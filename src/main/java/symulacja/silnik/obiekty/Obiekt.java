@@ -1,6 +1,8 @@
 package symulacja.silnik.obiekty;
 
+import symulacja.Symulacja;
 import symulacja.silnik.mapa.Pole;
+import symulacja.silnik.oddzialy.Oddzial;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +29,8 @@ public abstract class Obiekt {
         ATAK("A"),
         OBRONA("O"),
         WYPOSAZENIE("W"),
-        TEREN("T");
+        TEREN("T"),
+        GRANICA("G");
 
         public String obiektTyp;
 
@@ -41,25 +44,25 @@ public abstract class Obiekt {
         }
     }
 
-    public static List<Obiekt> utworzListeObiektow(final List<Pole.Wspolrzedne> listaWspolrzednych, final int zageszczenie) {
+    public static List<Obiekt> utworzListeObiektow(final int zageszczenie) {
 
         List<Obiekt> listaObiektow = new ArrayList<>();
-        int buf = round(2 * zageszczenie *listaWspolrzednych.size() / STALA_ZAGESZCZENIA);
+        int buf = (int) round(2.0 * zageszczenie * Symulacja.listaWspolrzednych.size() / STALA_ZAGESZCZENIA);
         int[] indeksy = new int[buf];
         for(int i = 0; i < buf; i++) {
-            indeksy[i] = ThreadLocalRandom.current().nextInt(0, listaWspolrzednych.size());
+            indeksy[i] = ThreadLocalRandom.current().nextInt(0, Symulacja.listaWspolrzednych.size());
         }
         for(int i = 0; i < buf; i++) {
             if ( i < 15 * buf / 100) {
-                listaObiektow.add(i, new ObiektAtaku(listaWspolrzednych.get(indeksy[i])));
+                listaObiektow.add(i, new ObiektAtaku(Symulacja.listaWspolrzednych.get(indeksy[i])));
             } else {
                 if ( i < 30 * buf / 100) {
-                    listaObiektow.add(i, new ObiektObrony(listaWspolrzednych.get(indeksy[i])));
+                    listaObiektow.add(i, new ObiektObrony(Symulacja.listaWspolrzednych.get(indeksy[i])));
                 } else {
                     if ( i < 50 * buf / 100) {
-                        listaObiektow.add(i, new ObiektWyposazenia(listaWspolrzednych.get(indeksy[i])));
+                        listaObiektow.add(i, new ObiektWyposazenia(Symulacja.listaWspolrzednych.get(indeksy[i])));
                     } else {
-                        listaObiektow.add(i, new ObiektTerenu(listaWspolrzednych.get(indeksy[i])));
+                        listaObiektow.add(i, new ObiektTerenu(Symulacja.listaWspolrzednych.get(indeksy[i])));
                     }
                 }
             }
@@ -70,6 +73,5 @@ public abstract class Obiekt {
     Obiekt(final Pole.Wspolrzedne obiektPozycja) {
         this.obiektPozycja = obiektPozycja;
     }
-
 
 }

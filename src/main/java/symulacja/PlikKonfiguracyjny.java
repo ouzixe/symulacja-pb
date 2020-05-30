@@ -1,5 +1,7 @@
 package symulacja;
 
+import symulacja.gui.PasekMenu;
+
 import java.io.*;
 import java.util.Properties;
 
@@ -13,7 +15,7 @@ public class PlikKonfiguracyjny {
         return config.exists();
     }
 
-    static Properties stworzKonfiguracje() {
+    static void stworzKonfiguracje() {
         try (OutputStream wyjscie = new FileOutputStream("zasoby/config.properties")) {
 
             Properties config = new Properties();
@@ -24,13 +26,11 @@ public class PlikKonfiguracyjny {
             config.setProperty("liczba-oddzialow", "5");
 
             config.store(wyjscie, null);
-            return config;
 
 
         } catch (IOException io) {
             io.printStackTrace();
         }
-        return null;
     }
 
     public static int odczytajWartosc(String wartosc) {
@@ -60,8 +60,24 @@ public class PlikKonfiguracyjny {
             wejscie.close();
 
             wyjscie = new FileOutputStream("zasoby/config.properties");
-            config.setProperty(wartosc, wynik);
-            config.store(wyjscie, "Zmieniono konfiguracje");
+            int buf = Integer.parseInt(wynik);
+            if(wartosc.equals("zageszczenie")) {
+                if (buf > 0 && buf < 6) config.setProperty(wartosc, wynik);
+                else PasekMenu.oknoBledu(wartosc);
+            }
+            if(wartosc.equals("szerokosc")) {
+                if (buf > 4 && buf < 26) config.setProperty(wartosc, wynik);
+                else PasekMenu.oknoBledu(wartosc);
+            }
+            if(wartosc.equals("wysokosc")) {
+                if(buf > 4 && buf < 26) config.setProperty(wartosc, wynik);
+                else PasekMenu.oknoBledu(wartosc);
+            }
+            if(wartosc.equals("liczba-oddzialow")) {
+                if(buf > 1 && buf < 16) config.setProperty(wartosc, wynik);
+                else PasekMenu.oknoBledu(wartosc);
+            }
+            config.store(wyjscie, null);
             wyjscie.close();
         } catch (IOException io) {
             io.printStackTrace();

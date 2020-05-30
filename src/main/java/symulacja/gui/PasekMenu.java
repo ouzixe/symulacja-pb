@@ -1,6 +1,8 @@
 package symulacja.gui;
 
 import symulacja.PlikKonfiguracyjny;
+import symulacja.Symulacja;
+import symulacja.silnik.mapa.Mapa;
 
 import javax.swing.*;
 
@@ -19,7 +21,6 @@ public class PasekMenu {
 
         final JMenuItem nowaMenu = new JMenuItem("Nowa symulacja");
         nowaMenu.addActionListener(e -> {
-            //nowaSymulacja();
             //TODO Możliwość uruchomienia nowej symulacji w trakcie/ po zakończeniu poprzedniej
         });
         menuPlik.add(nowaMenu);
@@ -52,16 +53,16 @@ public class PasekMenu {
         domyslne.setBounds(10, 170, 170, 20);
 
         JLabel szerokosc = new JLabel();
-        szerokosc.setText("Szerokosc: ");
+        szerokosc.setText("Szerokosc (5-25): ");
         szerokosc.setBounds(10, 10, 150, 30);
         JLabel wysokosc = new JLabel();
-        wysokosc.setText("Wysokosc: ");
+        wysokosc.setText("Wysokosc (5-25): ");
         wysokosc.setBounds(10, 50, 150, 30);
         JLabel zageszczenie = new JLabel();
-        zageszczenie.setText("Zageszczenie (1 - 5): ");
+        zageszczenie.setText("Zageszczenie (1-5): ");
         zageszczenie.setBounds(10, 90, 150, 30);
         JLabel liczbaOddzialow = new JLabel();
-        liczbaOddzialow.setText("Liczba oddzialow: ");
+        liczbaOddzialow.setText("Liczba oddzialow (2-15): ");
         liczbaOddzialow.setBounds(10, 130, 150, 30);
 
         JTextField szerokoscPole = new JTextField("" + PlikKonfiguracyjny.odczytajWartosc("szerokosc"));
@@ -99,6 +100,7 @@ public class PasekMenu {
             PlikKonfiguracyjny.zmienWartosc("wysokosc", wysokoscPole.getText());
             PlikKonfiguracyjny.zmienWartosc("zageszczenie", zageszczeniePole.getText());
             PlikKonfiguracyjny.zmienWartosc("liczba-oddzialow", liczbaOddzialowPole.getText());
+            JOptionPane.showMessageDialog(null, "Przywrocono wartosci domyslne", "", JOptionPane.INFORMATION_MESSAGE);
         });
 
         aktualizuj.addActionListener(e -> {
@@ -106,7 +108,15 @@ public class PasekMenu {
             PlikKonfiguracyjny.zmienWartosc("wysokosc", wysokoscPole.getText());
             PlikKonfiguracyjny.zmienWartosc("zageszczenie", zageszczeniePole.getText());
             PlikKonfiguracyjny.zmienWartosc("liczba-oddzialow", liczbaOddzialowPole.getText());
-            konfig.dispose();
+            szerokoscPole.setText("" + PlikKonfiguracyjny.odczytajWartosc("szerokosc"));
+            wysokoscPole.setText("" + PlikKonfiguracyjny.odczytajWartosc("wysokosc"));
+            zageszczeniePole.setText("" + PlikKonfiguracyjny.odczytajWartosc("zageszczenie"));
+            liczbaOddzialowPole.setText("" + PlikKonfiguracyjny.odczytajWartosc("liczba-oddzialow"));
+            JOptionPane.showMessageDialog(null, "Zmienionio konfiguracje", "", JOptionPane.INFORMATION_MESSAGE);
         });
+    }
+
+    public static void oknoBledu(String wartosc) {
+        JOptionPane.showMessageDialog(null, "Wartosc " + wartosc + " poza zakresem.\nWartosc nie zostala zmieniona.", "Blad", JOptionPane.ERROR_MESSAGE);
     }
 }

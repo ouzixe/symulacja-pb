@@ -13,4 +13,6 @@ dependencies {
     testImplementation group: 'junit', name: 'junit', version: '4.12'
 }
 
-mainClassName 'symulacja.Symulacja'
+application {
+    mainClass = 'symulacja.Symulacja' as Property<String>
+}

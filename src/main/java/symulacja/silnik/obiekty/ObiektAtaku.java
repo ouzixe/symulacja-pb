@@ -1,16 +1,15 @@
 package symulacja.silnik.obiekty;
 
 import symulacja.silnik.mapa.Pole;
+import symulacja.silnik.oddzialy.Oddzial;
 
 public class ObiektAtaku extends Obiekt {
 
-    //Permamentne zwiększenie o x% ataku Oddziału który pierwszy wejdzie w interakcję
+    //Permamentne zwiększenie o x ataku Oddziału który pierwszy wejdzie w interakcję
+    static final int wartoscAtaku = 10;
 
     public ObiektAtaku(Pole.Wspolrzedne obiektPozycja) {
         super(obiektPozycja);
-        Obiekt.Typ obiektTyp = Typ.ATAK;
-        boolean czyMoznaPrzejsc = true;
-        int wartoscAtaku = 0;
     }
 
     @Override
@@ -18,4 +17,10 @@ public class ObiektAtaku extends Obiekt {
         return Typ.ATAK.toString();
     }
 
+    @Override
+    public Typ odczytajTyp() { return Typ.ATAK; }
+
+    public static void przejecie(Oddzial oddzial) {
+        oddzial.atak = oddzial.resztaAtak + wartoscAtaku;
+    }
 }

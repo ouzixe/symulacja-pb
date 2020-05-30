@@ -1,6 +1,8 @@
 package symulacja;
 
 import symulacja.gui.Plansza;
+import symulacja.silnik.obiekty.ObiektGranicy;
+import symulacja.silnik.tura.Dowodca;
 import symulacja.silnik.mapa.Pole;
 import symulacja.silnik.obiekty.Obiekt;
 import symulacja.silnik.oddzialy.Oddzial;
@@ -17,9 +19,17 @@ public class Symulacja {
     //Pełni rolę bazy danych, trzymając listy Współrzędnych, Obiektów i Oddziałów.
     //Odpowiada za samo uruchomienie symulacji.
 
+    public static List<Pole.Wspolrzedne> listaWspolrzednych;
+    public static List<Obiekt> listaObiektow;
+    public static List<ObiektGranicy> listaObiektowGranicy;
+    public static List<Oddzial> listaOddzialow;
+    public static List<Dowodca> listaDowodcow;
+    static int powtorzenie;
+    static boolean dzialanieSymulacji;
+
     public static void main(String[] args){
 
-        if (PlikKonfiguracyjny.czyIstnieje() == true) {
+        if (PlikKonfiguracyjny.czyIstnieje()) {
             szerokosc = PlikKonfiguracyjny.odczytajWartosc("szerokosc");
             wysokosc = PlikKonfiguracyjny.odczytajWartosc("wysokosc");
             zageszczenie = PlikKonfiguracyjny.odczytajWartosc("zageszczenie");
@@ -29,15 +39,18 @@ public class Symulacja {
         }
 
         //Tworzenie podstawowych list dla dzialania symulacji
-        final List<Pole.Wspolrzedne> listaWspolrzednych = Pole.Wspolrzedne.utworzListeWspolrzednych(szerokosc, wysokosc);
-        final List<Obiekt> listaObiektow = Obiekt.utworzListeObiektow(listaWspolrzednych, zageszczenie);
-        final List<Oddzial> listaOddzialow = Oddzial.utworzListeOddzialow(listaWspolrzednych, listaObiektow, liczbaOddzialow);
-        //final List<Dowodca> listaDowodcow = Dowodca.utworzListeDowodzcow();
+        listaWspolrzednych = Pole.Wspolrzedne.utworzListeWspolrzednych(szerokosc, wysokosc);
+        listaObiektow = Obiekt.utworzListeObiektow(zageszczenie);
+        listaOddzialow = Oddzial.utworzListeOddzialow();
+        listaDowodcow = Dowodca.utworzListeDowodzcow(listaOddzialow);
+
+        listaObiektowGranicy = ObiektGranicy.utworzListeObiektowGranic();
+        powtorzenie = 0;
+        dzialanieSymulacji = true;
+
 
         //Wygenerowanie mapy i wyświetlenie jej
-        Plansza plansza = new Plansza(szerokosc, wysokosc, listaWspolrzednych, listaObiektow, listaOddzialow);
-
-
+        Plansza plansza = new Plansza(szerokosc, wysokosc, listaWspolrzednych, listaObiektow, listaOddzialow, listaDowodcow, powtorzenie);
 
     }
 
@@ -47,5 +60,9 @@ public class Symulacja {
     public static int odczytajWysokosc() {
         return wysokosc;
     }
-
+    public static void dodajPowtorzenie() { powtorzenie++; }
+    public static int odczytajPowtorzenie() { return powtorzenie; }
+    public static int odczytajLiczbeOddzialow() { return liczbaOddzialow; }
+    public static boolean czySymulacjaDziala() { return dzialanieSymulacji; }
+    public static void wylaczSymulacje() { dzialanieSymulacji = false; }
 }

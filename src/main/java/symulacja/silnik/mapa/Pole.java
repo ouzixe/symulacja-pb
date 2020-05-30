@@ -46,6 +46,7 @@ public abstract class Pole {
     public abstract boolean czyPoleZajete();
     public abstract Obiekt odczytajObiekt();
     public abstract Oddzial odczytajOddzial();
+    public abstract boolean czyGranica();
     public static final class PustePole extends Pole {
 
         private PustePole(final Wspolrzedne wspolrzedne) {
@@ -70,6 +71,11 @@ public abstract class Pole {
         @Override
         public Oddzial odczytajOddzial() {
             return null;
+        }
+
+        @Override
+        public boolean czyGranica() {
+            return false;
         }
     }
 
@@ -107,6 +113,11 @@ public abstract class Pole {
         @Override
         public Oddzial odczytajOddzial() {
             return this.oddzialNaPolu;
+        }
+
+        @Override
+        public boolean czyGranica() {
+            return this.obiektNaPolu != null && this.obiektNaPolu.odczytajTyp() == Obiekt.Typ.GRANICA;
         }
     }
 }

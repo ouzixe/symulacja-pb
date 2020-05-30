@@ -1,6 +1,8 @@
 package symulacja.silnik.mapa;
 
 
+import symulacja.Symulacja;
+import symulacja.silnik.tura.Dowodca;
 import symulacja.silnik.obiekty.*;
 import symulacja.silnik.oddzialy.*;
 
@@ -8,19 +10,21 @@ import java.util.*;
 
 public class Mapa {
 
-    public final List<Pole> listaPol;
+    public static List<Pole> listaPol;
+    public static Dowodca aktualnyDowodca;
 
     //Trzymanie listę Pól - ich współrzędnych oraz Obiektów i Oddziałów
     //znajdujących się na nich. Będzie też zajmować się ruchami Oddziałów - sprawdzać, czy są
     //możliwe oraz co się na tych polach znajduje
 
-    private Mapa(final List<Pole.Wspolrzedne> listaWspolrzednych, final List<Obiekt> listaObiektow, final List<Oddzial> listaOddzialow) {
+    public Mapa(final List<Pole.Wspolrzedne> listaWspolrzednych,
+                final List<Obiekt> listaObiektow,
+                final List<Oddzial> listaOddzialow,
+                final List<Dowodca> listaDowodcow,
+                int powtorzenie) {
 
-        this.listaPol = Collections.unmodifiableList(utworzListePol(listaWspolrzednych, listaObiektow, listaOddzialow));
-
-        //final Collection<Oddzial.Ruch> mozliweRuchy = obliczMozliweRuchy(this.listaOddzialow);
-
-
+        listaPol = utworzListePol();
+        aktualnyDowodca = listaDowodcow.get(powtorzenie % listaDowodcow.size());
     }
 
     public Pole odczytajPole(Pole.Wspolrzedne wspolrzedne) {
@@ -30,69 +34,49 @@ public class Mapa {
         return null;
     }
 
-    private static List<Pole> utworzListePol(List<Pole.Wspolrzedne> listaWspolrzednych,final List<Obiekt> listaObiektow,
-                                             final List<Oddzial>listaOddzialow) {
+    private static List<Pole> utworzListePol() {
         final List<Pole> listaPol = new ArrayList<>();
-        boolean obiekty, oddzialy;
-        int i, j, k;
-
-        for(i = 0; i < listaWspolrzednych.size(); i++) {
-            obiekty = false;
-            oddzialy = false;
-
-            for(j = 0; j < listaObiektow.size(); j++) {
-                if(listaWspolrzednych.get(i) == listaObiektow.get(j).wspolrzedne()) {
-                    obiekty = true;
-                    break;
+        zewnetrzna:
+        for(Pole.Wspolrzedne wspolrzedne : Symulacja.listaWspolrzednych) {
+            for(Obiekt obiekt : Symulacja.listaObiektow) {
+                if(obiekt.wspolrzedne() == wspolrzedne) {
+                    listaPol.add(Pole.utworzPole(wspolrzedne, obiekt, null));
+                    continue zewnetrzna;
                 }
             }
-            for(k = 0; k < listaOddzialow.size(); k++) {
-                if(listaWspolrzednych.get(i) == listaOddzialow.get(k).wspolrzedne()) {
-                    oddzialy = true;
-                    break;
+            for(Oddzial oddzial : Symulacja.listaOddzialow) {
+                if(oddzial.wspolrzedne() == wspolrzedne) {
+                    listaPol.add(Pole.utworzPole(wspolrzedne, null, oddzial));
+                    continue zewnetrzna;
                 }
             }
-            if(obiekty && !oddzialy) {
-                listaPol.add(i, Pole.utworzPole(listaWspolrzednych.get(i), listaObiektow.get(j), null));
-            }
-            if(!obiekty && oddzialy) {
-                listaPol.add(i, Pole.utworzPole(listaWspolrzednych.get(i), null, listaOddzialow.get(k)));
-            }
-            if(!obiekty && !oddzialy) {
-                listaPol.add(i, Pole.utworzPole(listaWspolrzednych.get(i), null, null));
-            }
+            listaPol.add(Pole.utworzPole(wspolrzedne, null, null));
         }
-        return Collections.unmodifiableList(listaPol);
+        if(Symulacja.listaOddzialow.isEmpty()) System.out.println("puste");
+        return listaPol;
     }
 
-    public static Mapa utworzPodstawowaMape(final List<Pole.Wspolrzedne> listaWspolrzednych, final List<Obiekt> listaObiektow, final List<Oddzial> listaOddzialow) {
-        return new Mapa(listaWspolrzednych, listaObiektow, listaOddzialow);
+    public static Dowodca przypiszDowodce() {
+        Dowodca dowodca = Symulacja.listaDowodcow.get(Symulacja.odczytajPowtorzenie() % Symulacja.listaDowodcow.size());
+        for(int i = 0; i < Symulacja.listaDowodcow.size(); i++) {
+            if (dowodca.odczytajOddzial().zycie != 0) return dowodca;
+            else dowodca = Symulacja.listaDowodcow.get(Symulacja.odczytajPowtorzenie() % Symulacja.listaDowodcow.size());
+        } return null;
     }
 
-    private static List<Oddzial> policzZyjaceOddzialy(final List<Pole> listaPol) {
-        final List<Oddzial> zyjaceOddzialy = new ArrayList<>();
-        for(final Pole pole : listaPol) {
-            if(pole.czyPoleZajete()) {
-                final Oddzial oddzial = pole.odczytajOddzial();
-                zyjaceOddzialy.add(oddzial);
-            }
-        }
-        return Collections.unmodifiableList(zyjaceOddzialy);
-    }
-
-    private List<Oddzial.Ruch> obliczMozliweRuchy(final List<Oddzial> listaOddzialow) {
-        final List<Oddzial.Ruch> mozliweRuchy = new ArrayList<>();
-        for(final Oddzial oddzial : listaOddzialow) {
-            mozliweRuchy.addAll(oddzial.obliczMozliweRuchy(this));
-        }
-        return Collections.unmodifiableList(mozliweRuchy);
+    public static Mapa utworzPodstawowaMape(final List<Pole.Wspolrzedne> listaWspolrzednych,
+                                            final List<Obiekt> listaObiektow,
+                                            final List<Oddzial> listaOddzialow,
+                                            final List<Dowodca> listaDowodcow,
+                                            int powtorzenie) {
+        return new Mapa(listaWspolrzednych, listaObiektow, listaOddzialow, listaDowodcow, powtorzenie);
     }
 
     public String toString(int szerokosc, int wysokosc) {
         final StringBuilder builder = new StringBuilder();
         for(int i = 0; i < szerokosc; i++) {
             for(int j = 0; j < wysokosc; j++) {
-                final String poleTekst = this.listaPol.get(i * wysokosc + j).toString();
+                final String poleTekst = listaPol.get(i * wysokosc + j).toString();
                 builder.append(String.format("%3s", poleTekst));
             }
             builder.append("\n");
