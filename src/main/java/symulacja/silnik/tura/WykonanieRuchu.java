@@ -77,10 +77,12 @@ public class WykonanieRuchu {
             Oddzial.przeliczStatystyki(poczatkowePole.odczytajOddzial());
             if(poczatkowePole.odczytajOddzial().zycie <= 0) {
                 poczatkowePole.odczytajOddzial().zycie = 0;
+                PlikRaportu.oddzialPolegl(poczatkowePole.odczytajOddzial());
                 poczatkowePole = Pole.utworzPole(poczatkowePole.wspolrzedne, poczatkowePole.odczytajObiekt(), null);
             } else poczatkowePole = Pole.utworzPole(poczatkowePole.wspolrzedne, poczatkowePole.odczytajObiekt(), poczatkowePole.odczytajOddzial());
             if(docelowePole.odczytajOddzial().zycie <= 0) {
                 docelowePole.odczytajOddzial().zycie = 0;
+                PlikRaportu.oddzialPolegl(docelowePole.odczytajOddzial());
                 docelowePole = Pole.utworzPole(docelowePole.wspolrzedne, docelowePole.odczytajObiekt(), null);
             } else docelowePole = Pole.utworzPole(docelowePole.wspolrzedne, docelowePole.odczytajObiekt(), docelowePole.odczytajOddzial());
         }
@@ -110,15 +112,24 @@ public class WykonanieRuchu {
             for(Pole pole : Mapa.listaPol) {
                 warunek = false;
                 if((pole.wspolrzedne.x == odleglosc || pole.wspolrzedne.x == Symulacja.odczytajSzerokosc() - odleglosc + 1) && pole.wspolrzedne.y != odleglosc) {
-                    if(pole.odczytajOddzial() != null) pole.odczytajOddzial().zycie = 0;
+                    if(pole.odczytajOddzial() != null) {
+                        pole.odczytajOddzial().zycie = 0;
+                        PlikRaportu.oddzialPolegl(pole.odczytajOddzial());
+                    }
                     warunek = true;
                 } else {
                     if((pole.wspolrzedne.y == odleglosc || pole.wspolrzedne.y == Symulacja.odczytajWysokosc() - odleglosc + 1) && pole.wspolrzedne.x != odleglosc) {
-                        if(pole.odczytajOddzial() != null) pole.odczytajOddzial().zycie = 0;
+                        if(pole.odczytajOddzial() != null) {
+                            pole.odczytajOddzial().zycie = 0;
+                            PlikRaportu.oddzialPolegl(pole.odczytajOddzial());
+                        }
                         warunek = true;
                     } else {
                         if(pole.wspolrzedne.x == odleglosc) {
-                            if(pole.odczytajOddzial() != null) pole.odczytajOddzial().zycie = 0;
+                            if(pole.odczytajOddzial() != null) {
+                                pole.odczytajOddzial().zycie = 0;
+                                PlikRaportu.oddzialPolegl(pole.odczytajOddzial());
+                            }
                             warunek = true;
                         }
                     }

@@ -27,8 +27,28 @@ public class Symulacja {
     static int powtorzenie;
     static boolean dzialanieSymulacji;
 
-    public static void main(String[] args){
+    private static Plansza plansza;
 
+    public static void main(String[] args){
+        nowaSymulacja();
+    }
+
+    //Utworzenie nowej symulacji
+    public static void nowaSymulacja() {
+        if(plansza != null) plansza.dispose();
+        odczytajKonfiguracje();
+        listaWspolrzednych = Pole.Wspolrzedne.utworzListeWspolrzednych(szerokosc, wysokosc);
+        listaObiektow = Obiekt.utworzListeObiektow(zageszczenie);
+        listaOddzialow = Oddzial.utworzListeOddzialow();
+        listaDowodcow = Dowodca.utworzListeDowodzcow(listaOddzialow);
+        listaObiektowGranicy = ObiektGranicy.utworzListeObiektowGranic();
+        powtorzenie = 0;
+        dzialanieSymulacji = true;
+        plansza = new Plansza(szerokosc, wysokosc, listaWspolrzednych, listaObiektow, listaOddzialow, listaDowodcow, powtorzenie);
+    }
+
+    //Odczytanie konfiguracji z pliku, jezeli plik konfiguracyjny istnieje
+    private static void odczytajKonfiguracje() {
         if (PlikKonfiguracyjny.czyIstnieje()) {
             szerokosc = PlikKonfiguracyjny.odczytajWartosc("szerokosc");
             wysokosc = PlikKonfiguracyjny.odczytajWartosc("wysokosc");
@@ -37,21 +57,6 @@ public class Symulacja {
         } else {
             PlikKonfiguracyjny.stworzKonfiguracje();
         }
-
-        //Tworzenie podstawowych list dla dzialania symulacji
-        listaWspolrzednych = Pole.Wspolrzedne.utworzListeWspolrzednych(szerokosc, wysokosc);
-        listaObiektow = Obiekt.utworzListeObiektow(zageszczenie);
-        listaOddzialow = Oddzial.utworzListeOddzialow();
-        listaDowodcow = Dowodca.utworzListeDowodzcow(listaOddzialow);
-
-        listaObiektowGranicy = ObiektGranicy.utworzListeObiektowGranic();
-        powtorzenie = 0;
-        dzialanieSymulacji = true;
-
-
-        //Wygenerowanie mapy i wyświetlenie jej
-        Plansza plansza = new Plansza(szerokosc, wysokosc, listaWspolrzednych, listaObiektow, listaOddzialow, listaDowodcow, powtorzenie);
-
     }
 
     public static int odczytajSzerokosc() {

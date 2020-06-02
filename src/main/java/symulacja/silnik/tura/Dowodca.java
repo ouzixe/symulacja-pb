@@ -1,5 +1,6 @@
 package symulacja.silnik.tura;
 
+import symulacja.PlikRaportu;
 import symulacja.Symulacja;
 import symulacja.gui.Plansza;
 import symulacja.silnik.mapa.Mapa;
@@ -38,6 +39,7 @@ public class Dowodca {
             if(oddzial.zycie > 0) licznik++;
         }
         if(licznik <= 1) Plansza.koniecSymulacji();
+        else PlikRaportu.oddzielRuchy();
     }
 
     public boolean czyOddzialZywy() {

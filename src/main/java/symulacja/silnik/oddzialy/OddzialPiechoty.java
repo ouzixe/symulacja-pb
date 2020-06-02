@@ -1,12 +1,6 @@
 package symulacja.silnik.oddzialy;
 
-import symulacja.silnik.mapa.Mapa;
 import symulacja.silnik.mapa.Pole;
-import symulacja.silnik.obiekty.Obiekt;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class OddzialPiechoty extends Oddzial {
 

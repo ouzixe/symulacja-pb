@@ -1,5 +1,6 @@
 package symulacja.gui;
 
+import symulacja.PlikRaportu;
 import symulacja.Symulacja;
 import symulacja.silnik.tura.Dowodca;
 import symulacja.silnik.mapa.Mapa;
@@ -14,6 +15,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Plansza {
@@ -25,9 +27,6 @@ public class Plansza {
 
     private static final Color jasnyKolorPola = Color.decode("#228B22");
     private static final Color ciemnyKolorPola = Color.decode("#006400");
-
-    private final static Dimension ROZMIAR_POLA = new Dimension(10, 10);
-
 
     private static String sciezkaIkon = "ikony/";
 
@@ -42,16 +41,17 @@ public class Plansza {
         //Graficzna reprezentacja Symulacji
 
         this.plansza = new JFrame("Symulacja");
-        this.plansza.setLayout(new BorderLayout());
+        this.plansza.setLayout(new FlowLayout(FlowLayout.LEADING));
+        plansza.setSize(obliczWymiary());
         final JMenuBar planszaPasekMenu = PasekMenu.utworzPasekMenu();
         this.plansza.setJMenuBar(planszaPasekMenu);
-        this.plansza.setSize(new Dimension(1024,  768));
         this.plansza.setResizable(false);
         this.pasekBoczny = new PasekBoczny();
         mapa = Mapa.utworzPodstawowaMape(listaWspolrzednych, listaObiektow, listaOddzialow, listaDowodcow, powtorzenie);
         mapaPanel = new MapaPanel(szerokosc, wysokosc, listaWspolrzednych);
-        this.plansza.add(mapaPanel,  BorderLayout.CENTER);
-        this.plansza.add(this.pasekBoczny, BorderLayout.EAST);
+        mapaPanel.setSize(Symulacja.odczytajSzerokosc()*40, Symulacja.odczytajWysokosc()*40);
+        this.plansza.add(mapaPanel);
+        this.plansza.add(this.pasekBoczny);
         this.plansza.setLocationRelativeTo(null);
         this.plansza.setVisible(true);
         this.plansza.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -60,9 +60,17 @@ public class Plansza {
 
     public static void koniecSymulacji() {
         Symulacja.wylaczSymulacje();
+        PlikRaportu.zakonczPlik();
         JOptionPane.showMessageDialog(null, "Symulacja zakonczona", "", JOptionPane.INFORMATION_MESSAGE);
     }
 
+    public void dispose() {
+        plansza.dispose();
+    }
+
+    private Dimension obliczWymiary() {
+        return new Dimension(Symulacja.odczytajSzerokosc() * 50 + 280, Symulacja.odczytajWysokosc() * 50 + 70);
+    }
 
     protected static class MapaPanel extends JPanel {
 
@@ -71,7 +79,7 @@ public class Plansza {
         final List<PolePanel> polaNaMapie;
 
         MapaPanel(final int szerokosc, final int wysokosc, final List<Pole.Wspolrzedne> listaWspolrzednych) {
-            super(new GridLayout(szerokosc, wysokosc));
+            super(new GridLayout(wysokosc, szerokosc));
             this.polaNaMapie = new ArrayList<>();
             for (int i = 0; i < szerokosc * wysokosc; i++) {
                 final PolePanel polePanel = new PolePanel(listaWspolrzednych.get(i), i);
@@ -102,7 +110,7 @@ public class Plansza {
 
         PolePanel(final Pole.Wspolrzedne wspolrzedne, final int i) {
             this.wspolrzedne = wspolrzedne;
-            this.setPreferredSize(new Dimension(40, 40));
+            this.setPreferredSize(new Dimension(50, 50));
             przypiszKolorPolu(i);
             przypiszIkony(mapa);
             validate();
@@ -131,7 +139,6 @@ public class Plansza {
                 try {
                     oddzial = ImageIO.read(new File(sciezkaIkon +
                                     mapa.odczytajPole(this.wspolrzedne).odczytajOddzial().toString() + ".png"));
-                    //add(new JLabel(new ImageIcon(obrazek)));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -155,12 +162,27 @@ public class Plansza {
                 g.dispose();
                 add(new JLabel(new ImageIcon(obrazek)));
             }
-
         }
 
+        static boolean parzystyRzad = true;
+
         private void przypiszKolorPolu(final int i) {
-            if (i % 2 == 0) setBackground(jasnyKolorPola);
-            else if (i % 2 == 1) setBackground(ciemnyKolorPola);
+            if(i % Symulacja.odczytajSzerokosc() == 0) {
+                parzystyRzad = !parzystyRzad;
+            }
+            if(Symulacja.odczytajSzerokosc() % 2 == 0) {
+                if (parzystyRzad) {
+                    if (i % 2 == 0) setBackground(jasnyKolorPola);
+                    else setBackground(ciemnyKolorPola);
+                } else {
+                    if (i % 2 == 1) setBackground(jasnyKolorPola);
+                    else setBackground(ciemnyKolorPola);
+                }
+            }
+            else {
+                if (i % 2 == 0) setBackground(jasnyKolorPola);
+                else setBackground(ciemnyKolorPola);
+            }
         }
     }
 

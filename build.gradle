@@ -14,5 +14,5 @@ dependencies {
 }
 
 application {
-    mainClass = 'symulacja.Symulacja' as Property<String>
+    mainClass = 'symulacja.Symulacja'
 }

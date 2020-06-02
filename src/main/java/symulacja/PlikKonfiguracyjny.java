@@ -22,7 +22,7 @@ public class PlikKonfiguracyjny {
 
             config.setProperty("szerokosc", "15");
             config.setProperty("wysokosc", "15");
-            config.setProperty("zageszczenie", "5");
+            config.setProperty("zageszczenie", "3");
             config.setProperty("liczba-oddzialow", "5");
 
             config.store(wyjscie, null);

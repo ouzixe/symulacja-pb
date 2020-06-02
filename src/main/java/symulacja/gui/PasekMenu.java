@@ -5,6 +5,7 @@ import symulacja.Symulacja;
 import symulacja.silnik.mapa.Mapa;
 
 import javax.swing.*;
+import java.awt.*;
 
 
 public class PasekMenu {
@@ -20,9 +21,7 @@ public class PasekMenu {
         final JMenu menuPlik = new JMenu("Plik");
 
         final JMenuItem nowaMenu = new JMenuItem("Nowa symulacja");
-        nowaMenu.addActionListener(e -> {
-            //TODO Możliwość uruchomienia nowej symulacji w trakcie/ po zakończeniu poprzedniej
-        });
+        nowaMenu.addActionListener(e -> Symulacja.nowaSymulacja());
         menuPlik.add(nowaMenu);
 
         final JMenuItem wyjscieMenu = new JMenuItem("Wyjscie");
@@ -46,48 +45,62 @@ public class PasekMenu {
         //Okno pozwalające zmieniać konfigurację symulacji
 
         JFrame konfig = new JFrame("");
+        konfig.setLayout(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
+
+        JLabel szerokosc = new JLabel("Szerokosc (5-25): ", SwingConstants.RIGHT);
+        c.anchor = GridBagConstraints.EAST;
+        c.weighty = 1.0;
+        c.weightx = 1.0;
+        c.gridx = 0;
+        c.gridy = 0;
+        konfig.add(szerokosc, c);
+
+        JLabel wysokosc = new JLabel("Wysokosc (5-25): ", SwingConstants.RIGHT);
+        c.gridy = 1;
+        konfig.add(wysokosc, c);
+
+        JLabel zageszczenie = new JLabel("Zageszczenie (1-5): ", SwingConstants.RIGHT);
+        c.gridy = 2;
+        konfig.add(zageszczenie, c);
+
+        JLabel liczbaOddzialow = new JLabel("Liczba oddzialow (2-15): ", SwingConstants.RIGHT);
+        c.gridy = 3;
+        konfig.add(liczbaOddzialow, c);
+
+        JTextField szerokoscPole = new JTextField("" + PlikKonfiguracyjny.odczytajWartosc("szerokosc"), 2);
+        c.anchor = GridBagConstraints.WEST;
+        c.insets = new Insets(0, 20, 0, 0);
+        c.gridx = 1;
+        c.gridy = 0;
+        konfig.add(szerokoscPole, c);
+
+        JTextField wysokoscPole = new JTextField("" + PlikKonfiguracyjny.odczytajWartosc("wysokosc"), 2);
+        c.gridy = 1;
+        konfig.add(wysokoscPole, c);
+
+        JTextField zageszczeniePole = new JTextField("" +PlikKonfiguracyjny.odczytajWartosc("zageszczenie"), 2);
+        c.gridy = 2;
+        konfig.add(zageszczeniePole, c);
+
+        JTextField liczbaOddzialowPole = new JTextField("" + PlikKonfiguracyjny.odczytajWartosc("liczba-oddzialow"), 2);
+        c.gridy = 3;
+        konfig.add(liczbaOddzialowPole, c);
 
         JButton aktualizuj = new JButton("Aktualizuj konfiguracje");
-        aktualizuj.setBounds(10, 200, 170, 40);
+        c.anchor = GridBagConstraints.CENTER;
+        c.insets = new Insets(0, 0, 0, 0);
+        c.gridx = 0;
+        c.gridy = 4;
+        c.gridwidth = 2;
+        konfig.add(aktualizuj, c);
+
         JButton domyslne = new JButton("Przywroc domyslne");
-        domyslne.setBounds(10, 170, 170, 20);
+        c.gridy = 5;
+        konfig.add(domyslne, c);
 
-        JLabel szerokosc = new JLabel();
-        szerokosc.setText("Szerokosc (5-25): ");
-        szerokosc.setBounds(10, 10, 150, 30);
-        JLabel wysokosc = new JLabel();
-        wysokosc.setText("Wysokosc (5-25): ");
-        wysokosc.setBounds(10, 50, 150, 30);
-        JLabel zageszczenie = new JLabel();
-        zageszczenie.setText("Zageszczenie (1-5): ");
-        zageszczenie.setBounds(10, 90, 150, 30);
-        JLabel liczbaOddzialow = new JLabel();
-        liczbaOddzialow.setText("Liczba oddzialow (2-15): ");
-        liczbaOddzialow.setBounds(10, 130, 150, 30);
-
-        JTextField szerokoscPole = new JTextField("" + PlikKonfiguracyjny.odczytajWartosc("szerokosc"));
-        szerokoscPole.setBounds(140, 10, 40, 30);
-        JTextField wysokoscPole = new JTextField("" + PlikKonfiguracyjny.odczytajWartosc("wysokosc"));
-        wysokoscPole.setBounds(140, 50, 40, 30);
-        JTextField zageszczeniePole = new JTextField("" +PlikKonfiguracyjny.odczytajWartosc("zageszczenie"));
-        zageszczeniePole.setBounds(140, 90, 40, 30);
-        JTextField liczbaOddzialowPole = new JTextField("" + PlikKonfiguracyjny.odczytajWartosc("liczba-oddzialow"));
-        liczbaOddzialowPole.setBounds(140, 130, 40, 30);
-
-        konfig.add(aktualizuj);
-        konfig.add(domyslne);
-        konfig.add(szerokosc);
-        konfig.add(wysokosc);
-        konfig.add(liczbaOddzialow);
-        konfig.add(zageszczenie);
-        konfig.add(szerokoscPole);
-        konfig.add(wysokoscPole);
-        konfig.add(zageszczeniePole);
-        konfig.add(liczbaOddzialowPole);
-        konfig.setSize(205, 290);
-        konfig.setLayout(null);
+        konfig.setSize(250, 250);
         konfig.setVisible(true);
-        konfig.setResizable(false);
         konfig.setLocationRelativeTo(null);
         konfig.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 

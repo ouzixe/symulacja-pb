@@ -59,7 +59,7 @@ public abstract class Obiekt {
                 if ( i < 30 * buf / 100) {
                     listaObiektow.add(i, new ObiektObrony(Symulacja.listaWspolrzednych.get(indeksy[i])));
                 } else {
-                    if ( i < 50 * buf / 100) {
+                    if ( i < 45 * buf / 100) {
                         listaObiektow.add(i, new ObiektWyposazenia(Symulacja.listaWspolrzednych.get(indeksy[i])));
                     } else {
                         listaObiektow.add(i, new ObiektTerenu(Symulacja.listaWspolrzednych.get(indeksy[i])));

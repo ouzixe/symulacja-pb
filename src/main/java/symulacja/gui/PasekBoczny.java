@@ -2,17 +2,12 @@ package symulacja.gui;
 
 import symulacja.PlikRaportu;
 import symulacja.Symulacja;
-import symulacja.silnik.mapa.Mapa;
-import symulacja.silnik.mapa.Pole;
-import symulacja.silnik.obiekty.Obiekt;
 import symulacja.silnik.oddzialy.Oddzial;
 import symulacja.silnik.tura.WykonanieRuchu;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,32 +18,56 @@ public class PasekBoczny extends JPanel {
 
     private final LogiModel modelLog;
     private final StatyModel modelStats;
-    private final JScrollPane scrollPaneLogi;
-    private final JScrollPane scrollPaneStaty;
+    private static JScrollBar sb;
     private static final Dimension ROZMIARY_TABELI_LOGOW = new Dimension(250, 400);
-    private static final Dimension ROZMIARY_TABELI_STATYSTYK = new Dimension(250, 100);
-    private static final Dimension ROZMIARY_PRZYCISKU = new Dimension(200, 50);
+    private static final Dimension ROZMIARY_TABELI_STATYSTYK = new Dimension(250, 150);
+    private static final Dimension ROZMIARY_PRZYCISKU = new Dimension(200, 30);
 
     PasekBoczny() {
-        this.setLayout(new BorderLayout());
+        this.setLayout(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
+        c.fill = GridBagConstraints.VERTICAL;
         this.modelLog = new LogiModel();
         this.modelStats = new StatyModel();
+
         final JTable tabelaLogow = new JTable(modelLog);
-        final JTable tabelaStats = new JTable(modelStats);
-        final JButton nastepnaTura = new JButton("Nastepna tura");
-        nastepnaTura.setPreferredSize(ROZMIARY_PRZYCISKU);
         tabelaLogow.setRowHeight(15);
-        tabelaStats.setRowHeight(15);
-        this.scrollPaneLogi = new JScrollPane(tabelaLogow);
-        this.scrollPaneStaty = new JScrollPane(tabelaStats);
+        JScrollPane scrollPaneLogi = new JScrollPane(tabelaLogow);
         scrollPaneLogi.setColumnHeaderView(tabelaLogow.getTableHeader());
         scrollPaneLogi.setPreferredSize(ROZMIARY_TABELI_LOGOW);
+        sb = scrollPaneLogi.getVerticalScrollBar();
+        modelLog.wypelnijTabele();
+        c.weighty = 1.0;
+        c.gridx = 0;
+        c.gridy = 0;
+        this.add(scrollPaneLogi, c);
+
+        final JTable tabelaStats = new JTable(modelStats);
+        tabelaStats.setRowHeight(15);
+        JScrollPane scrollPaneStaty = new JScrollPane(tabelaStats);
         scrollPaneStaty.setColumnHeaderView(tabelaStats.getTableHeader());
         scrollPaneStaty.setPreferredSize(ROZMIARY_TABELI_STATYSTYK);
         modelStats.wypelnijTabele();
-        this.add(scrollPaneLogi, BorderLayout.NORTH);
-        this.add(scrollPaneStaty, BorderLayout.CENTER);
-        this.add(nastepnaTura, BorderLayout.SOUTH);
+        c.weighty = 1.0;
+        c.gridx = 0;
+        c.gridy = 1;
+        this.add(scrollPaneStaty, c);
+
+        final JButton nastepnaTura = new JButton("Nastepna tura");
+        nastepnaTura.setPreferredSize(ROZMIARY_PRZYCISKU);
+        c.weighty = 0.0;
+        c.gridx = 0;
+        c.gridy = 2;
+        this.add(nastepnaTura, c);
+
+        final JButton automatycznie = new JButton("Przeprowadz automatycznie");
+        automatycznie.setPreferredSize(ROZMIARY_PRZYCISKU);
+        c.gridx = 0;
+        c.gridy = 3;
+        this.add(automatycznie, c);
+
+        tabelaLogow.getColumnModel().getColumn(0).setPreferredWidth(50);
+        tabelaLogow.getColumnModel().getColumn(1).setPreferredWidth(200);
         this.setVisible(true);
 
         nastepnaTura.addActionListener(e -> {
@@ -56,34 +75,28 @@ public class PasekBoczny extends JPanel {
                 WykonanieRuchu.wykonanieRuchu();
                 modelStats.wypelnijTabele();
                 modelLog.wypelnijTabele();
+                modelLog.fireTableDataChanged();
                 mapaPanel.rysujMape(mapa);
+                validate();
+                aktualizujScroll();
             }
+        });
+
+        automatycznie.addActionListener(e -> {
+            while(Symulacja.czySymulacjaDziala()) {
+                WykonanieRuchu.wykonanieRuchu();
+            }
+            modelStats.wypelnijTabele();
+            modelLog.wypelnijTabele();
+            mapaPanel.rysujMape(mapa);
+            validate();
+            aktualizujScroll();
         });
     }
 
-    void odswiez(final Mapa mapa, final PlikRaportu plikRaportu) {
-        int aktualnyRzad = 0;
-        this.modelLog.wyczysc();
-        for(final Oddzial.Ruch ruch : PlikRaportu.ruchy) {
-            final String tekstOddzialu = ruch.odczytajPoruszonyOddzial().toString();
-            final String tekstRuchu = ruch.toString();
-            this.modelLog.setValueAt(tekstOddzialu, aktualnyRzad, 0);
-            this.modelLog.setValueAt(tekstRuchu, aktualnyRzad, 1);
-            aktualnyRzad++;
-        }
-
-        if(PlikRaportu.ruchy.size() > 0) {
-            final Oddzial.Ruch ostatniRuch = PlikRaportu.ruchy.get(plikRaportu.rozmiar() - 1);
-            final String tekstOddzialu = ostatniRuch.odczytajPoruszonyOddzial().toString();
-            final String tekstRuchu = ostatniRuch.toString();
-            this.modelLog.setValueAt(tekstOddzialu, aktualnyRzad - 1, 0);
-            this.modelLog.setValueAt(tekstRuchu, aktualnyRzad - 1, 1);
-        }
-
-        final JScrollBar pionowy = scrollPaneLogi.getVerticalScrollBar();
-        pionowy.setValue(pionowy.getMaximum());
+    private static void aktualizujScroll() {
+        sb.setValue( sb.getMaximum() );
     }
-
 
     private static class LogiModel extends DefaultTableModel {
 
@@ -92,11 +105,6 @@ public class PasekBoczny extends JPanel {
 
         LogiModel() {
             this.wartosci = new ArrayList<>();
-        }
-
-        public void wyczysc() {
-            this.wartosci.clear();
-            setRowCount(0);
         }
 
         @Override
@@ -131,11 +139,12 @@ public class PasekBoczny extends JPanel {
                 aktualnyRzad = this.wartosci.get(rzad);
             }
             if(kolumna == 0) {
-                aktualnyRzad.ustawOddzial((String)wartosc);
-            } else if(kolumna == 1) {
-                aktualnyRzad.ustawRuch((String)wartosc);
-                fireTableCellUpdated(rzad, kolumna);
+                aktualnyRzad.ustawOddzial(String.valueOf(wartosc));
             }
+            if(kolumna == 1) {
+                aktualnyRzad.ustawRuch((String)wartosc);
+            }
+        fireTableCellUpdated(rzad, kolumna);
         }
 
         @Override
@@ -150,8 +159,8 @@ public class PasekBoczny extends JPanel {
 
         private void wypelnijTabele() {
             for(int i = 0; i <  PlikRaportu.ruchy.size(); i++) {
-                setValueAt(String.valueOf(PlikRaportu.ruchy.get(i).odczytajPoruszonyOddzial().numer), i, 0);
-                setValueAt((PlikRaportu.ruchy.get(i).toString()), i, 1);
+                setValueAt(PlikRaportu.ruchy.get(i).odczytajPoruszonyOddzial().numer, i, 0);
+                setValueAt(PlikRaportu.ruchy.get(i).toString(), i, 1);
             }
         }
     }
@@ -162,11 +171,6 @@ public class PasekBoczny extends JPanel {
         private static final String[] NAZWY = {"Oddzial", "Zdrowie", "Atak", "Obrona", "Sila"};
 
         StatyModel() { this.wartosci = new ArrayList<>(); }
-
-        public void wyczysc() {
-            this.wartosci.clear();
-            setRowCount(0);
-        }
 
         @Override
         public int getRowCount() {
@@ -214,20 +218,17 @@ public class PasekBoczny extends JPanel {
             }
             if(kolumna == 1) {
                 aktualnyRzad.ustawZdrowie((String)wartosc);
-                fireTableCellUpdated(rzad, kolumna);
             }
             if(kolumna == 2) {
                 aktualnyRzad.ustawAtak((String)wartosc);
-                fireTableCellUpdated(rzad, kolumna);
             }
             if(kolumna == 3) {
                 aktualnyRzad.ustawObrone((String)wartosc);
-                fireTableCellUpdated(rzad, kolumna);
             }
             if(kolumna == 4) {
                 aktualnyRzad.ustawSile((String)wartosc);
-                fireTableCellUpdated(rzad, kolumna);
             }
+            fireTableCellUpdated(rzad, kolumna);
         }
 
         @Override
@@ -242,7 +243,7 @@ public class PasekBoczny extends JPanel {
 
         private void wypelnijTabele() {
             for(int i = 0; i < Symulacja.listaOddzialow.size(); i++) {
-                setValueAt(String.valueOf(i+1), i, 0);
+                setValueAt(String.valueOf(Symulacja.listaOddzialow.get(i).numer), i, 0);
                 setValueAt(String.valueOf(Symulacja.listaOddzialow.get(i).zycie), i, 1);
                 setValueAt(String.valueOf(Symulacja.listaOddzialow.get(i).atak), i, 2);
                 setValueAt(String.valueOf(Symulacja.listaOddzialow.get(i).obrona), i, 3);
@@ -260,7 +261,7 @@ public class PasekBoczny extends JPanel {
         private String obrona;
         private String sila;
 
-         Rzad() {}
+        Rzad() {}
 
         public String odczytajOddzial() { return this.oddzial; }
         public String odczytajRuch() { return this.ruch; }
