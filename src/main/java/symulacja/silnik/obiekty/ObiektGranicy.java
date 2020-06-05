@@ -6,9 +6,9 @@ import symulacja.silnik.mapa.Pole;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ObiektGranicy extends Obiekt{
+//Zmniejszanie mapy, zmuszając oddziały do ruchu
 
-    //"Zmuszenie" Oddziałów do ruchu
+public class ObiektGranicy extends Obiekt{
 
     public ObiektGranicy(Pole.Wspolrzedne obiektPozycja) {
         super(obiektPozycja);

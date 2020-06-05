@@ -2,7 +2,6 @@ package symulacja.silnik.obiekty;
 
 import symulacja.Symulacja;
 import symulacja.silnik.mapa.Pole;
-import symulacja.silnik.oddzialy.Oddzial;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +14,6 @@ public abstract class Obiekt {
     private static final int STALA_ZAGESZCZENIA = 20;
     protected final Pole.Wspolrzedne obiektPozycja;
     protected Typ obiektTyp;
-    public boolean czyMoznaPrzejsc;
 
     public Pole.Wspolrzedne wspolrzedne() {
         return this.obiektPozycja;
@@ -32,7 +30,7 @@ public abstract class Obiekt {
         TEREN("T"),
         GRANICA("G");
 
-        public String obiektTyp;
+        public final String obiektTyp;
 
         Typ(String obiektTyp) {
             this.obiektTyp = obiektTyp;

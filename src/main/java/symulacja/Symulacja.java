@@ -9,15 +9,14 @@ import symulacja.silnik.oddzialy.Oddzial;
 
 import java.util.List;
 
+//Baza danych - listy współrzędnych, obiektów, oddziałów i dowódców. Uruchomienie symulacji.
+
 public class Symulacja {
 
     static int szerokosc = 15;
     static int wysokosc = 15;
     static int zageszczenie = 5;
     static int liczbaOddzialow = 5;
-
-    //Pełni rolę bazy danych, trzymając listy Współrzędnych, Obiektów i Oddziałów.
-    //Odpowiada za samo uruchomienie symulacji.
 
     public static List<Pole.Wspolrzedne> listaWspolrzednych;
     public static List<Obiekt> listaObiektow;
@@ -45,7 +44,7 @@ public class Symulacja {
         PlikRaportu.wyczyscListy();
         powtorzenie = 0;
         dzialanieSymulacji = true;
-        plansza = new Plansza(szerokosc, wysokosc, listaWspolrzednych, listaObiektow, listaOddzialow, listaDowodcow, powtorzenie);
+        plansza = new Plansza(szerokosc, wysokosc, listaWspolrzednych, listaDowodcow, powtorzenie);
     }
 
     //Odczytanie konfiguracji z pliku, jezeli plik konfiguracyjny istnieje

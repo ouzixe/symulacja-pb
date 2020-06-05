@@ -3,24 +3,23 @@ package symulacja.silnik.tura;
 import symulacja.PlikRaportu;
 import symulacja.Symulacja;
 import symulacja.gui.Plansza;
-import symulacja.silnik.mapa.Mapa;
 import symulacja.silnik.mapa.Pole;
-import symulacja.silnik.obiekty.Obiekt;
-import symulacja.silnik.obiekty.ObiektGranicy;
 import symulacja.silnik.oddzialy.Oddzial;
+import symulacja.silnik.oddzialy.Ruch;
+import symulacja.silnik.oddzialy.Zwiad;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+//"Inteligencja" oddziału, podejmowanie decyzji co do następnego ruchu
+
 public class Dowodca {
 
-    protected Oddzial oddzial;
-    protected final List<Oddzial.Ruch> mozliweRuchy;
+    protected final Oddzial oddzial;
+    protected final List<Ruch> mozliweRuchy;
 
-    //Dowódca ma odpowiadać za "inteligencję" oddziałów -
-    // podejmuje decyzje co do następnych ruchów
-    public Dowodca(final Oddzial oddzial, final List<Oddzial.Ruch> mozliweRuchy) {
+    public Dowodca(final Oddzial oddzial, final List<Ruch> mozliweRuchy) {
         this.oddzial = oddzial;
         this.mozliweRuchy = mozliweRuchy;
     }
@@ -39,7 +38,10 @@ public class Dowodca {
             if(oddzial.zycie > 0) licznik++;
         }
         if(licznik <= 1) Plansza.koniecSymulacji();
-        else PlikRaportu.oddzielRuchy();
+        else {
+            char c = '=';
+            PlikRaportu.oddzielRuchy(c);
+        }
     }
 
     public boolean czyOddzialZywy() {
@@ -48,40 +50,43 @@ public class Dowodca {
         return this.oddzial.zycie > 0;
     }
 
-    public Oddzial odczytajOddzial() { return this.oddzial; }
+    public Ruch decyzja() {
 
-    public Oddzial.Ruch decyzja() {
+        List<Pole> zbadanePola = Zwiad.zbadajPola(this.oddzial.odczytajPole());
+        List<Ruch> mozliweRuchy = this.oddzial.obliczRuchy(zbadanePola, this.oddzial);
 
-        List<Pole> zbadanePola = Oddzial.Zwiad.zbadajPola(this.oddzial);
-        List<Oddzial.Ruch> mozliweRuchy = Oddzial.Ruch.obliczRuchy(zbadanePola, this.oddzial);
-
-        if(zbadanePola.isEmpty() || this.oddzial.sila <= 0 || !Oddzial.Zwiad.czyPotrzebaRuchu(zbadanePola, this.oddzial)) {
+        if(zbadanePola.isEmpty() || this.oddzial.sila <= 0 || !Zwiad.czyPotrzebaRuchu(zbadanePola, this.oddzial)) {
             return mozliweRuchy.get(0);
         }
         if(this.oddzial.sila > 1) {
-            if(Oddzial.Zwiad.czySilniejszyPrzeciwnik(zbadanePola, this.oddzial) && Oddzial.Zwiad.czyObokObiekty(zbadanePola)) {
-                for(Oddzial.Ruch ruch : mozliweRuchy) {
-                    if(ruch.odczytajTypRuchu() == Oddzial.Ruch.TypRuchu.PRZEJECIE) return ruch;
+            if(Zwiad.czySilniejszyPrzeciwnik(zbadanePola, this.oddzial) && Zwiad.czyObokObiekty(zbadanePola)) {
+                for(Ruch ruch : mozliweRuchy) {
+                    if(ruch.odczytajTypRuchu() == Ruch.TypRuchu.PRZEJECIE) return ruch;
                 }
             }
-            if(Oddzial.Zwiad.czySlabszyPrzeciwnik(zbadanePola, this.oddzial)) {
-                for(Oddzial.Ruch ruch : mozliweRuchy) {
-                    if(ruch.odczytajTypRuchu() == Oddzial.Ruch.TypRuchu.ATAK) {
+            if(Zwiad.czySlabszyPrzeciwnik(zbadanePola, this.oddzial)) {
+                for(Ruch ruch : mozliweRuchy) {
+                    if(ruch.odczytajTypRuchu() == Ruch.TypRuchu.ATAK) {
                         if(ruch.odczytajDocelowePole().odczytajOddzial().obrona <= this.oddzial.atak) return ruch;
                     }
                 }
             }
-            if(Oddzial.Zwiad.czyObokObiekty(zbadanePola)) {
-                for(Oddzial.Ruch ruch : mozliweRuchy) {
-                    if(ruch.odczytajTypRuchu() == Oddzial.Ruch.TypRuchu.PRZEJECIE) return ruch;
+            if(Zwiad.czyObokObiekty(zbadanePola)) {
+                for(Ruch ruch : mozliweRuchy) {
+                    if(ruch.odczytajTypRuchu() == Ruch.TypRuchu.PRZEJECIE) return ruch;
                 }
             }
         }
-        List<Oddzial.Ruch> przemieszczenia = new ArrayList<>();
-        for(Oddzial.Ruch ruch : mozliweRuchy) {
-            if(ruch.odczytajTypRuchu() == Oddzial.Ruch.TypRuchu.PRZEMIESZCZENIE) przemieszczenia.add(ruch);
+        List<Ruch> przemieszczenia = new ArrayList<>();
+        for(Ruch ruch : mozliweRuchy) {
+            if(ruch.odczytajTypRuchu() == Ruch.TypRuchu.PRZEMIESZCZENIE) przemieszczenia.add(ruch);
         }
         if(przemieszczenia.isEmpty()) return mozliweRuchy.get(0);
+        for(Ruch ruch : przemieszczenia) {
+            Pole pole = ruch.odczytajDocelowePole();
+            List<Pole> wokolDocelowego = Zwiad.zbadajPola(pole);
+            if(Zwiad.czyObokGranica(wokolDocelowego)) return ruch;
+        }
         int rand = ThreadLocalRandom.current().nextInt(0, przemieszczenia.size());
         return przemieszczenia.get(rand);
     }

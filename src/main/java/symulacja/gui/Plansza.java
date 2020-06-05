@@ -5,8 +5,6 @@ import symulacja.Symulacja;
 import symulacja.silnik.tura.Dowodca;
 import symulacja.silnik.mapa.Mapa;
 import symulacja.silnik.mapa.Pole;
-import symulacja.silnik.obiekty.Obiekt;
-import symulacja.silnik.oddzialy.Oddzial;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -15,26 +13,22 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+
+//Główne okno GUI. Wyświetla aktualny stan symulacji.
 
 public class Plansza {
 
     private final JFrame plansza;
-    private final PasekBoczny pasekBoczny;
     protected static MapaPanel mapaPanel;
     public static Mapa mapa;
 
     private static final Color jasnyKolorPola = Color.decode("#228B22");
     private static final Color ciemnyKolorPola = Color.decode("#006400");
 
-    private static String sciezkaIkon = "zasoby/ikony/";
-
 
     public Plansza(final int szerokosc, final int wysokosc,
                    final List<Pole.Wspolrzedne> listaWspolrzednych,
-                   final List<Obiekt> listaObiektow,
-                   final List<Oddzial> listaOddzialow,
                    final List<Dowodca> listaDowodcow,
                    int powtorzenie) {
 
@@ -46,12 +40,12 @@ public class Plansza {
         final JMenuBar planszaPasekMenu = PasekMenu.utworzPasekMenu();
         this.plansza.setJMenuBar(planszaPasekMenu);
         this.plansza.setResizable(false);
-        this.pasekBoczny = new PasekBoczny();
-        mapa = Mapa.utworzPodstawowaMape(listaWspolrzednych, listaObiektow, listaOddzialow, listaDowodcow, powtorzenie);
+        PasekBoczny pasekBoczny = new PasekBoczny();
+        mapa = Mapa.utworzPodstawowaMape(listaDowodcow, powtorzenie);
         mapaPanel = new MapaPanel(szerokosc, wysokosc, listaWspolrzednych);
         mapaPanel.setSize(Symulacja.odczytajSzerokosc()*40, Symulacja.odczytajWysokosc()*40);
         this.plansza.add(mapaPanel);
-        this.plansza.add(this.pasekBoczny);
+        this.plansza.add(pasekBoczny);
         this.plansza.setLocationRelativeTo(null);
         this.plansza.setVisible(true);
         this.plansza.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -127,6 +121,7 @@ public class Plansza {
             this.removeAll();
             BufferedImage obiekt = null;
             BufferedImage oddzial = null;
+            String sciezkaIkon = "zasoby/ikony/";
             if(mapa.odczytajPole(this.wspolrzedne).odczytajObiekt() != null) {
                 try {
                     obiekt = ImageIO.read(new File(sciezkaIkon +

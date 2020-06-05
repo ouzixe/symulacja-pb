@@ -8,19 +8,14 @@ import symulacja.silnik.oddzialy.*;
 
 import java.util.*;
 
+//Tworzenie i trzymanie listy pól.
+
 public class Mapa {
 
     public static List<Pole> listaPol;
     public static Dowodca aktualnyDowodca;
 
-    //Trzymanie listę Pól - ich współrzędnych oraz Obiektów i Oddziałów
-    //znajdujących się na nich. Będzie też zajmować się ruchami Oddziałów - sprawdzać, czy są
-    //możliwe oraz co się na tych polach znajduje
-
-    public Mapa(final List<Pole.Wspolrzedne> listaWspolrzednych,
-                final List<Obiekt> listaObiektow,
-                final List<Oddzial> listaOddzialow,
-                final List<Dowodca> listaDowodcow,
+    public Mapa(final List<Dowodca> listaDowodcow,
                 int powtorzenie) {
 
         listaPol = utworzListePol();
@@ -56,20 +51,9 @@ public class Mapa {
         return listaPol;
     }
 
-    public static Dowodca przypiszDowodce() {
-        Dowodca dowodca = Symulacja.listaDowodcow.get(Symulacja.odczytajPowtorzenie() % Symulacja.listaDowodcow.size());
-        for(int i = 0; i < Symulacja.listaDowodcow.size(); i++) {
-            if (dowodca.odczytajOddzial().zycie != 0) return dowodca;
-            else dowodca = Symulacja.listaDowodcow.get(Symulacja.odczytajPowtorzenie() % Symulacja.listaDowodcow.size());
-        } return null;
-    }
-
-    public static Mapa utworzPodstawowaMape(final List<Pole.Wspolrzedne> listaWspolrzednych,
-                                            final List<Obiekt> listaObiektow,
-                                            final List<Oddzial> listaOddzialow,
-                                            final List<Dowodca> listaDowodcow,
+    public static Mapa utworzPodstawowaMape(final List<Dowodca> listaDowodcow,
                                             int powtorzenie) {
-        return new Mapa(listaWspolrzednych, listaObiektow, listaOddzialow, listaDowodcow, powtorzenie);
+        return new Mapa(listaDowodcow, powtorzenie);
     }
 
     public String toString(int szerokosc, int wysokosc) {

@@ -2,11 +2,11 @@ package symulacja.gui;
 
 import symulacja.PlikKonfiguracyjny;
 import symulacja.Symulacja;
-import symulacja.silnik.mapa.Mapa;
 
 import javax.swing.*;
 import java.awt.*;
 
+//Rozpoczęcie nowej symulacji. Zmiana konfiguracji.
 
 public class PasekMenu {
     static JMenuBar utworzPasekMenu() {
@@ -107,7 +107,7 @@ public class PasekMenu {
         domyslne.addActionListener(e -> {
             szerokoscPole.setText("15");
             wysokoscPole.setText("15");
-            zageszczeniePole.setText("5");
+            zageszczeniePole.setText("3");
             liczbaOddzialowPole.setText("5");
             PlikKonfiguracyjny.zmienWartosc("szerokosc", szerokoscPole.getText());
             PlikKonfiguracyjny.zmienWartosc("wysokosc", wysokoscPole.getText());

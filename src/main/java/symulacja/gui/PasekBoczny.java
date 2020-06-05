@@ -2,7 +2,7 @@ package symulacja.gui;
 
 import symulacja.PlikRaportu;
 import symulacja.Symulacja;
-import symulacja.silnik.oddzialy.Oddzial;
+import symulacja.silnik.oddzialy.Ruch;
 import symulacja.silnik.tura.WykonanieRuchu;
 
 import javax.swing.*;
@@ -13,6 +13,8 @@ import java.util.List;
 
 import static symulacja.gui.Plansza.mapa;
 import static symulacja.gui.Plansza.mapaPanel;
+
+//Wyświetlanie logów z ruchów oddziałów i ich statystyk. Kontrola symulacji.
 
 public class PasekBoczny extends JPanel {
 
@@ -150,7 +152,7 @@ public class PasekBoczny extends JPanel {
 
         @Override
         public Class<?> getColumnClass(final int kolumna) {
-            return Oddzial.Ruch.class;
+            return Ruch.class;
         }
 
         @Override
@@ -234,7 +236,7 @@ public class PasekBoczny extends JPanel {
 
         @Override
         public Class<?> getColumnClass(final int kolumna) {
-            return Oddzial.Ruch.class;
+            return Ruch.class;
         }
 
         @Override

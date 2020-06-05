@@ -3,9 +3,10 @@ package symulacja.silnik.obiekty;
 import symulacja.silnik.mapa.Pole;
 import symulacja.silnik.oddzialy.Oddzial;
 
+//Jednorazowe zwiększenie "życia" pierwszego Oddziału który wejdzie w interakcję
+
 public class ObiektWyposazenia extends Obiekt {
 
-    //Zwiększenie jednorazowo "życia" pierwszego Oddziału który wejdzie w interakcję
     final static int wartoscZasobow = 3;
 
     public ObiektWyposazenia(Pole.Wspolrzedne obiektPozycja) {

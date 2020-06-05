@@ -9,20 +9,19 @@ import java.util.List;
 
 import static symulacja.gui.Plansza.mapa;
 
-//Oddziały podstawowe, ze średnim atakiem i obroną
+//Oddziały specjalne, z wyższym atakiem i niższą obroną. Nie mogą zajmować obiektów obrony
 
-public class OddzialPiechoty extends Oddzial {
+public class OddzialZmotoryzowany extends Oddzial {
 
-    public OddzialPiechoty(int numer, Pole.Wspolrzedne wspolrzedne, Typ oddzialTyp) {
+    public OddzialZmotoryzowany(int numer, Pole.Wspolrzedne wspolrzedne, Typ oddzialTyp) {
         super(numer, wspolrzedne, oddzialTyp);
     }
 
-
-    private static final int STALA_ATAK = 10;
-    private static final int STALA_OBRONA = 10;
+    private static final int STALA_ATAK = 13;
+    private static final int STALA_OBRONA = 7;
 
     @Override
-    public String toString() { return Typ.PIECHOTA.toString(); }
+    public String toString() { return Typ.ZMOTORYZOWANY.toString(); }
 
     @Override
     public void przeliczStatystyki(Oddzial oddzial) {
@@ -41,8 +40,13 @@ public class OddzialPiechoty extends Oddzial {
                 continue;
             }
             if (pole.odczytajObiekt() != null) {
-                if (pole.odczytajObiekt().odczytajTyp() != Obiekt.Typ.TEREN && pole.odczytajObiekt().odczytajTyp() != Obiekt.Typ.GRANICA) {
+                if (pole.odczytajObiekt().odczytajTyp() != Obiekt.Typ.TEREN &&
+                        pole.odczytajObiekt().odczytajTyp() != Obiekt.Typ.GRANICA &&
+                        pole.odczytajObiekt().odczytajTyp() != Obiekt.Typ.OBRONA) {
                     mozliweRuchy.add(new Ruch.Przejecie(mapa, poruszonyOddzial, pole, Ruch.TypRuchu.PRZEJECIE));
+                }
+                if(pole.odczytajObiekt().odczytajTyp() == Obiekt.Typ.OBRONA) {
+                    mozliweRuchy.add(new Ruch.Przemieszczenie(mapa, poruszonyOddzial, pole, Ruch.TypRuchu.PRZEMIESZCZENIE));
                 }
                 continue;
             }

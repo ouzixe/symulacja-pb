@@ -5,11 +5,13 @@ import symulacja.silnik.oddzialy.Oddzial;
 
 import java.util.*;
 
+//Tworzenie listy współrzędnych. Spajanie współrzędnych, oddziałów i obiektów.
+
 public abstract class Pole {
 
     public static class Wspolrzedne {
-        public int x;
-        public int y;
+        public final int x;
+        public final int y;
         public Wspolrzedne(int x, int y) {
             this.x = x;
             this.y = y;
@@ -26,13 +28,9 @@ public abstract class Pole {
             }
             return listaWspolrzednych;
         }
-
-        public static boolean czyPoprawneWspolrzedne(Pole.Wspolrzedne wspolrzedne, int szerokosc, int wysokosc) {
-            return wspolrzedne.x > 0 && wspolrzedne.x < szerokosc - 1 && wspolrzedne.y > 0 && wspolrzedne.y < wysokosc - 1;
-        }
     }
 
-    public Wspolrzedne wspolrzedne;
+    public final Wspolrzedne wspolrzedne;
 
     //Tworzy jedno pole - w zależności od parametrów, Puste lub Zajęte
     public static Pole utworzPole(final Wspolrzedne wspolrzedne, final Obiekt obiekt, final Oddzial oddzial) {
@@ -43,7 +41,6 @@ public abstract class Pole {
     private Pole(final Wspolrzedne wspolrzedne) {
         this.wspolrzedne = wspolrzedne;
     }
-    public abstract boolean czyPoleZajete();
     public abstract Obiekt odczytajObiekt();
     public abstract Oddzial odczytajOddzial();
     public abstract boolean czyGranica();
@@ -56,11 +53,6 @@ public abstract class Pole {
         @Override
         public String toString() {
             return "-";
-        }
-
-        @Override
-        public boolean czyPoleZajete() {
-            return false;
         }
 
         @Override
@@ -98,11 +90,6 @@ public abstract class Pole {
                     return odczytajObiekt().toString();
                 } else return "#";
             }
-        }
-
-        @Override
-        public boolean czyPoleZajete() {
-            return true;
         }
 
         @Override

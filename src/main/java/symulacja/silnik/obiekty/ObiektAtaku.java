@@ -3,10 +3,11 @@ package symulacja.silnik.obiekty;
 import symulacja.silnik.mapa.Pole;
 import symulacja.silnik.oddzialy.Oddzial;
 
+//Permamentne zwiększenie o x ataku Oddziału który pierwszy wejdzie w interakcję
+
 public class ObiektAtaku extends Obiekt {
 
-    //Permamentne zwiększenie o x ataku Oddziału który pierwszy wejdzie w interakcję
-    static final int wartoscAtaku = 10;
+    static final int wartoscAtaku = 3;
 
     public ObiektAtaku(Pole.Wspolrzedne obiektPozycja) {
         super(obiektPozycja);
@@ -21,6 +22,6 @@ public class ObiektAtaku extends Obiekt {
     public Typ odczytajTyp() { return Typ.ATAK; }
 
     public static void przejecie(Oddzial oddzial) {
-        oddzial.atak = oddzial.resztaAtak + wartoscAtaku;
+        oddzial.resztaAtak = oddzial.resztaAtak + wartoscAtaku;
     }
 }

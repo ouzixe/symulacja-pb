@@ -3,10 +3,11 @@ package symulacja.silnik.obiekty;
 import symulacja.silnik.mapa.Pole;
 import symulacja.silnik.oddzialy.Oddzial;
 
+//Zwiększenie obrony Oddziału który znajduje się na tym samym polu
+
 public class ObiektObrony extends Obiekt {
 
-    //Zwiększenie obrony Oddziału który znajduje się na tym samym polu
-    public static final int wartoscObrony = 5;
+    private static final int wartoscObrony = 3;
 
     public ObiektObrony(Pole.Wspolrzedne obiektPozycja) {
         super(obiektPozycja);
@@ -21,6 +22,8 @@ public class ObiektObrony extends Obiekt {
     public Typ odczytajTyp() { return Typ.OBRONA; }
 
     public static void przejecie(Oddzial oddzial) {
-        oddzial.obrona = oddzial.resztaObrona + wartoscObrony;
+        oddzial.resztaObrona = oddzial.resztaObrona + wartoscObrony;
     }
+
+    public static void zejscie(Oddzial oddzial) { oddzial.resztaObrona = oddzial.resztaObrona - wartoscObrony; }
 }

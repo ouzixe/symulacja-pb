@@ -5,10 +5,9 @@ import symulacja.gui.PasekMenu;
 import java.io.*;
 import java.util.Properties;
 
-public class PlikKonfiguracyjny {
+//Tworzenie/edytowanie/odczytywanie pliku konfiguracyjnego
 
-    //Służy do utworzenia pliku konfiguracyjnego "config.properties",
-    //zmian wartości w nim oraz odczytywanie ich.
+public class PlikKonfiguracyjny {
 
     static boolean czyIstnieje() {
         File config = new File("zasoby/config.properties");
