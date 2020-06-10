@@ -5,15 +5,23 @@ import symulacja.gui.PasekMenu;
 import java.io.*;
 import java.util.Properties;
 
-//Tworzenie/edytowanie/odczytywanie pliku konfiguracyjnego
-
+/**
+ * Klasa do tworzenia, edytowania oraz odczytywania pliku konfiguracyjnego.
+ */
 public class PlikKonfiguracyjny {
 
+    /**
+     * Sprawdzenie czy plik konfiguracyjny istnieje.
+     * @return <code>true</code> jeżeli istnieje, <code>false</code> jeżeli nie istnieje.
+     */
     static boolean czyIstnieje() {
         File config = new File("zasoby/config.properties");
         return config.exists();
     }
 
+    /**
+     * Stworzenie pliku konfiguracyjnego z podstawowymi, domyślnymi wartościami.
+     */
     static void stworzKonfiguracje() {
         try (OutputStream wyjscie = new FileOutputStream("zasoby/config.properties")) {
 
@@ -32,6 +40,12 @@ public class PlikKonfiguracyjny {
         }
     }
 
+    /**
+     * Odczytanie wartości z pliku konfiguracyjnego.
+     * @param wartosc
+     * Wartość, która ma być odczytana z pliku konfiguracyjnego.
+     * @return Wartość odczytana z pliku konfiguracyjnego.
+     */
     public static int odczytajWartosc(String wartosc) {
         FileInputStream wejscie;
         Properties config;
@@ -49,6 +63,13 @@ public class PlikKonfiguracyjny {
         return wynik;
     }
 
+    /**
+     * Odczytanie wartości z pliku konfiguracyjnego.
+     * @param wartosc
+     * Wartość, która ma być zmieniona w pliku konfiguracyjnym.
+     * @param wynik
+     * Wartość, na którą ma być zamieniona wartość obecna w pliku konfiguracyjnym.
+     */
     public static void zmienWartosc(String wartosc, String wynik) {
         FileInputStream wejscie;
         FileOutputStream wyjscie;

@@ -6,9 +6,14 @@ import symulacja.Symulacja;
 import javax.swing.*;
 import java.awt.*;
 
-//Rozpoczęcie nowej symulacji. Zmiana konfiguracji.
-
+/**
+ * Pasek menu używany do uruchamiania nowej symulacji oraz zmiany konfiguracji.
+ */
 public class PasekMenu {
+    /**
+     * Tworzenie {@link PasekMenu}.
+     * @return Nowy {@link PasekMenu}.
+     */
     static JMenuBar utworzPasekMenu() {
         final JMenuBar planszaPasekMenu = new JMenuBar();
         planszaPasekMenu.add(utworzMenuPlik());
@@ -17,6 +22,10 @@ public class PasekMenu {
 
     }
 
+    /**
+     * Tworzenie menu Plik do uruchamiania nowej symulacji oraz zakończenia działania symulacji.
+     * @return Nowe menu Plik.
+     */
     private static JMenu utworzMenuPlik() {
         final JMenu menuPlik = new JMenu("Plik");
 
@@ -31,6 +40,10 @@ public class PasekMenu {
         return menuPlik;
     }
 
+    /**
+     * Tworzenie menu Konfiguracja do zmiany konfiguracji symulacji.
+     * @return Nowe menu Konfiguracja.
+     */
     private static JMenu utworzMenuKonfig() {
         final JMenu menuKonfig = new JMenu("Konfiguracja");
 
@@ -40,9 +53,10 @@ public class PasekMenu {
         return menuKonfig;
     }
 
+    /**
+     * Okno konfiguracji, w którym można zmienić właściwości symulacji.
+     */
     private static void oknoKonfiguracja() {
-
-        //Okno pozwalające zmieniać konfigurację symulacji
 
         JFrame konfig = new JFrame("");
         konfig.setLayout(new GridBagLayout());
@@ -129,6 +143,11 @@ public class PasekMenu {
         });
     }
 
+    /**
+     * Okno wyświetlające błąd, gdy wpisane wartości są poza zakresem.
+     * @param wartosc
+     * Przekazanie wartości która jest poza zakresem.
+     */
     public static void oknoBledu(String wartosc) {
         JOptionPane.showMessageDialog(null, "Wartosc " + wartosc + " poza zakresem.\nWartosc nie zostala zmieniona.", "Blad", JOptionPane.ERROR_MESSAGE);
     }

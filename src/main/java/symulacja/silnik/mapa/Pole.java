@@ -1,14 +1,19 @@
 package symulacja.silnik.mapa;
 
-import symulacja.silnik.obiekty.Obiekt;
+import symulacja.silnik.obiekty.*;
 import symulacja.silnik.oddzialy.Oddzial;
 
 import java.util.*;
 
-//Tworzenie listy współrzędnych. Spajanie współrzędnych, oddziałów i obiektów.
+/**
+ * Klasa odpowiedzialna za tworzenie współrzędnych oraz pól.
+ */
 
-public abstract class Pole {
+public class Pole {
 
+    /**
+     * Klasa odpowiedzialna za tworzenie współrzędnych.
+     */
     public static class Wspolrzedne {
         public final int x;
         public final int y;
@@ -17,7 +22,9 @@ public abstract class Pole {
             this.y = y;
         }
 
-        //Tworzy stałą listę współrzędnych - na jej podstawie odnajdywać się będą Oddziały i Obiekty
+        /**
+         * Metoda odpowiedzialna za tworzenie stałej listy {@link Wspolrzedne}.
+         */
         public static List<Wspolrzedne> utworzListeWspolrzednych(int szerokosc, int wysokosc) {
             final List<Pole.Wspolrzedne> listaWspolrzednych = new ArrayList<>();
             for(int i = 0; i < wysokosc; i++) {
@@ -30,81 +37,46 @@ public abstract class Pole {
         }
     }
 
+    /** {@link Wspolrzedne} pola. */
     public final Wspolrzedne wspolrzedne;
+    /** {@link Obiekt} pola. */
+    private final Obiekt obiektNaPolu;
+    /** {@link Oddzial} pola. */
+    private final Oddzial oddzialNaPolu;
 
-    //Tworzy jedno pole - w zależności od parametrów, Puste lub Zajęte
-    public static Pole utworzPole(final Wspolrzedne wspolrzedne, final Obiekt obiekt, final Oddzial oddzial) {
-        if (obiekt != null || oddzial != null) return new ZajetePole(wspolrzedne, obiekt, oddzial);
-        else return new PustePole(wspolrzedne);
-    }
-
-    private Pole(final Wspolrzedne wspolrzedne) {
+    /**
+     * Metoda utworzenia jednego pola.
+     * @param wspolrzedne
+     * {@link Wspolrzedne}.
+     * @param obiekt
+     * {@link Obiekt}.
+     * @param oddzial
+     * {@link Oddzial}.
+     */
+    public Pole(final Wspolrzedne wspolrzedne, final Obiekt obiekt, final Oddzial oddzial) {
         this.wspolrzedne = wspolrzedne;
-    }
-    public abstract Obiekt odczytajObiekt();
-    public abstract Oddzial odczytajOddzial();
-    public abstract boolean czyGranica();
-    public static final class PustePole extends Pole {
-
-        private PustePole(final Wspolrzedne wspolrzedne) {
-            super(wspolrzedne);
-        }
-
-        @Override
-        public String toString() {
-            return "-";
-        }
-
-        @Override
-        public Obiekt odczytajObiekt() {
-            return null;
-        }
-
-        @Override
-        public Oddzial odczytajOddzial() {
-            return null;
-        }
-
-        @Override
-        public boolean czyGranica() {
-            return false;
-        }
+        this.obiektNaPolu = obiekt;
+        this.oddzialNaPolu = oddzial;
     }
 
-    public static final class ZajetePole extends Pole {
+    /** Odczytanie {@link Obiekt} na {@link Pole}.
+     * @return {@link Obiekt} znajdujący się na {@link Pole}.
+     */
+    public Obiekt odczytajObiekt() {
+        return this.obiektNaPolu;
+    }
 
-        private final Obiekt obiektNaPolu;
-        private final Oddzial oddzialNaPolu;
-        ZajetePole(final Wspolrzedne wspolrzedne, Obiekt obiektNaPolu, Oddzial oddzialNaPolu) {
-            super(wspolrzedne);
-            this.obiektNaPolu = obiektNaPolu;
-            this.oddzialNaPolu = oddzialNaPolu;
-        }
+    /** Odczytanie {@link Oddzial} na {@link Pole}.
+     * @return {@link Oddzial} znajdujący się na {@link Pole}.
+     */
+    public Oddzial odczytajOddzial() {
+        return this.oddzialNaPolu;
+    }
 
-        @Override
-        public String toString() {
-            if(odczytajObiekt() == null) {
-                return odczytajOddzial().toString();
-            } else {
-                if(odczytajOddzial() == null) {
-                    return odczytajObiekt().toString();
-                } else return "#";
-            }
-        }
-
-        @Override
-        public Obiekt odczytajObiekt() {
-            return this.obiektNaPolu;
-        }
-
-        @Override
-        public Oddzial odczytajOddzial() {
-            return this.oddzialNaPolu;
-        }
-
-        @Override
-        public boolean czyGranica() {
-            return this.obiektNaPolu != null && this.obiektNaPolu.odczytajTyp() == Obiekt.Typ.GRANICA;
-        }
+    /** Sprawdzenie czy {@link Obiekt} na danym {@link Pole} to {@link ObiektGranicy}.
+     * @return true jeśli na {@link Pole} znajduje się {@link ObiektGranicy}, false jeżeli nie
+     */
+    public boolean czyGranica() {
+        return this.obiektNaPolu != null && this.obiektNaPolu.odczytajTyp() == Obiekt.Typ.GRANICA;
     }
 }

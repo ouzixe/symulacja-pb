@@ -4,6 +4,7 @@ import symulacja.PlikRaportu;
 import symulacja.Symulacja;
 import symulacja.gui.Plansza;
 import symulacja.silnik.mapa.Pole;
+import symulacja.silnik.obiekty.ObiektGranicy;
 import symulacja.silnik.oddzialy.Oddzial;
 import symulacja.silnik.oddzialy.Ruch;
 import symulacja.silnik.oddzialy.Zwiad;
@@ -14,16 +15,28 @@ import java.util.concurrent.ThreadLocalRandom;
 
 //"Inteligencja" oddziału, podejmowanie decyzji co do następnego ruchu
 
+/**
+ * Podejmowanie decyzji o następnym ruchu {@link Oddzial}.
+ */
 public class Dowodca {
 
+    /** Dowodzony {@link Oddzial}. */
     protected final Oddzial oddzial;
+    /** {@link Ruch} możliwe dla {@link Oddzial} */
     protected final List<Ruch> mozliweRuchy;
 
+    /** Metoda główna dowódcy. */
     public Dowodca(final Oddzial oddzial, final List<Ruch> mozliweRuchy) {
         this.oddzial = oddzial;
         this.mozliweRuchy = mozliweRuchy;
     }
 
+    /**
+     * Utworzenie listy {@link Dowodca}.
+     * @param listaOddzialow
+     * Przypisanie {@link Oddzial} do {@link Dowodca}.
+     * @return Lista {@link Dowodca}.
+     */
     public static List<Dowodca> utworzListeDowodzcow(final List<Oddzial> listaOddzialow) {
         List<Dowodca> listaDowodzcow = new ArrayList<>();
         for(int i = 0; i < listaOddzialow.size(); i++) {
@@ -32,6 +45,9 @@ public class Dowodca {
         return listaDowodzcow;
     }
 
+    /**
+     * Przedzielenie {@link PlikRaportu} jeżeli żyje więcej niż jeden {@link Oddzial}.
+     */
     public static void czyOstatniOddzial() {
         int licznik = 0;
         for(Oddzial oddzial : Symulacja.listaOddzialow) {
@@ -44,12 +60,21 @@ public class Dowodca {
         }
     }
 
+    /**
+     * Sprawdzenie czy {@link Oddzial} może wykonać ruch.
+     * @return <code>true</code> jeżeli może wykonać ruch, w przeciwnym wypadku <code>false</code>.
+     */
     public boolean czyOddzialZywy() {
         if(oddzial.odczytajPole() == null) return false;
         if(oddzial.odczytajPole().czyGranica()) return false;
         return this.oddzial.zycie > 0;
     }
 
+    /**
+     * Zbadanie pól dookoła oddziału, obliczenie możliwych ruchów oraz wybranie
+     * najbardziej korzystnego ruchu w zależności od otoczenia.
+     * @return Wybrany przez {@link Dowodca} {@link Ruch}.
+     */
     public Ruch decyzja() {
 
         List<Pole> zbadanePola = Zwiad.zbadajPola(this.oddzial.odczytajPole());

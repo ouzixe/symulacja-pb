@@ -1,5 +1,6 @@
 package symulacja;
 
+import symulacja.silnik.mapa.Pole;
 import symulacja.silnik.oddzialy.Oddzial;
 import symulacja.silnik.oddzialy.Ruch;
 
@@ -9,13 +10,25 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-//Utworzenie i trzymanie listy logów, po zakończeniu symulacji wygenerowanie z nich pliku.
-
+/**
+ * Klasa do utworzenia i przetrzymywania listy wykonanych ruchów oraz do
+ * zapisu tej list do pliku na końcu działania symulacji.
+ */
 public class PlikRaportu {
 
+    /** Lista {@link Ruch}, które zostały wykonane. */
     public static List<Ruch> ruchy = new ArrayList<>();
+    /** Lista wartości, które zostaną zapisane do pliku. */
     private static List<String> listaRuchow = new ArrayList<>();
 
+    /**
+     * Dodanie {@link Ruch} do {@link PlikRaportu#ruchy} oraz dodanie odpowiednio przygotowanej
+     * pozycji w {@link PlikRaportu#listaRuchow}.
+     * @param przedRuchem
+     * {@link Pole.Wspolrzedne} z których {@link Oddzial} wykonał {@link Ruch}.
+     * @param ruch
+     * {@link Ruch} wykonany przez {@link Oddzial};
+     */
     public static void dodajRuch(String przedRuchem, final Ruch ruch) {
         ruchy.add(ruch);
         String baza = ruch.odczytajPoruszonyOddzial().numer + ": " + ruch + " (" + przedRuchem + ")";
@@ -29,10 +42,18 @@ public class PlikRaportu {
         listaRuchow.add(baza+reszta);
     }
 
+    /**
+     * Oddzielenie występujące w celu wyszczególnienia jakiegoś zdarzenia.
+     * @param c
+     * Znak, z którego wykonana jest linia oddzielająca.
+     */
     public static void oddzielRuchy(char c) {
         listaRuchow.add(String.valueOf(c).repeat(32));
     }
 
+    /**
+     * Zakończenie {@link PlikRaportu#listaRuchow} i zapisanie go do pliku.
+     */
     public static void zakonczPlik() {
         char c = '-';
         oddzielRuchy(c);
@@ -52,6 +73,11 @@ public class PlikRaportu {
         }
     }
 
+    /**
+     * Dodaje do {@link PlikRaportu#listaRuchow} informację o porażce {@link Oddzial}.
+     * @param oddzial
+     * {@link Oddzial}, który poległ.
+     */
     public static void oddzialPolegl(Oddzial oddzial) {
         char c = '#';
         String str = "# Polegl oddzial " + oddzial.numer + ": ";
@@ -62,6 +88,11 @@ public class PlikRaportu {
         oddzielRuchy(c);
     }
 
+    /**
+     * Zapisanie wartości z {@link PlikRaportu#listaRuchow} do pliku i zapisanie go.
+     * @throws IOException
+     * Ponieważ jest to operacja na pliku.
+     */
     public static void stworzPlik() throws IOException {
         Date data = new Date();
         SimpleDateFormat dataFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
@@ -74,6 +105,9 @@ public class PlikRaportu {
         zapis.close();
     }
 
+    /**
+     * Wyczyszczenie {@link PlikRaportu#listaRuchow} oraz {@link PlikRaportu#ruchy}.
+     */
     public static void wyczyscListy() {
         ruchy = new ArrayList<>();
         listaRuchow = new ArrayList<>();

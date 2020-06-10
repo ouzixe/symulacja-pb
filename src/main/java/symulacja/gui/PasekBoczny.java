@@ -14,17 +14,29 @@ import java.util.List;
 import static symulacja.gui.Plansza.mapa;
 import static symulacja.gui.Plansza.mapaPanel;
 
-//Wyświetlanie logów z ruchów oddziałów i ich statystyk. Kontrola symulacji.
-
+/**
+ * Wyświetlanie tabeli z ruchami oddziałów, tabeli z ich statystykami oraz panelu kontrolnego symulacji.
+ */
 public class PasekBoczny extends JPanel {
 
+    /** Model tablicy ruchów. */
     private final LogiModel modelLog;
-    private final StatyModel modelStats;
+    /** ScrollBar do tablicy ruchów. */
     private static JScrollBar sb;
+    /** Model tablicy statystyk. */
+    private final StatyModel modelStats;
+
+    /** Rozmiary tablicy ruchów. */
     private static final Dimension ROZMIARY_TABELI_LOGOW = new Dimension(250, 400);
+    /** Rozmiary tablicy statystyk. */
     private static final Dimension ROZMIARY_TABELI_STATYSTYK = new Dimension(250, 150);
+    /** Rozmiary przycisków. */
     private static final Dimension ROZMIARY_PRZYCISKU = new Dimension(200, 30);
 
+    /**
+     * Metoda wyświetlania paska bocznego (tabeli: logów i statystyk, przycisków: następna tura i
+     * automatyczne przeprowadzenie symulacji).
+     */
     PasekBoczny() {
         this.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
@@ -97,30 +109,51 @@ public class PasekBoczny extends JPanel {
         });
     }
 
+    /** Ustawianie paska przewijania na dole, gdzie znajdują sie najnowsze ruchy. */
     private static void aktualizujScroll() {
         sb.setValue( sb.getMaximum() );
     }
 
+    /** Klasa dla modelu tablicy ruchów. */
     private static class LogiModel extends DefaultTableModel {
 
+        /** Wartości wpisane w tablicę ruchów */
         private final List<Rzad> wartosci;
+        /** Nazwy kolumn tablicy ruchów. */
         private static final String[] NAZWY = {"Oddzial", "Ruch"};
 
+        /** Utworzenie pustej listy {@link LogiModel#wartosci}. */
         LogiModel() {
             this.wartosci = new ArrayList<>();
         }
 
+        /**
+         * Odczytanie ilości rzędów.
+         * @return Ilość rzędów.
+         */
         @Override
         public int getRowCount() {
             if(this.wartosci == null) return 0;
             return this.wartosci.size();
         }
 
+        /**
+         * Odczytanie ilości kolumn.
+         * @return Ilość kolumn.
+         */
         @Override
         public int getColumnCount() {
             return NAZWY.length;
         }
 
+        /**
+         * Odczytanie wartości w określonym miejscu tabeli ruchów.
+         * @param rzad
+         * rząd w którym znajduje się komórka docelowa
+         * @param kolumna
+         * kolumna w której znajduje się komórka docelowa
+         * @return Wartość znajdująca się w komórce docelowej, lub <code>null</code> jeżeli komórka jest pusta.
+         */
         @Override
         public Object getValueAt(final int rzad, final int kolumna) {
             final Rzad aktualnyRzad = this.wartosci.get(rzad);
@@ -132,6 +165,15 @@ public class PasekBoczny extends JPanel {
             return null;
         }
 
+        /**
+         * Ustawienie wartości w określonym miejscu tabeli ruchów.
+         * @param wartosc
+         * wartość która będzie wpisana w ustaloną komórkę
+         * @param rzad
+         * rząd w którym znajduje się komórka docelowa
+         * @param kolumna
+         * kolumna w której znajduje się komórka docelowa
+         */
         @Override
         public void setValueAt(final Object wartosc, final int rzad, final int kolumna) {
             final Rzad aktualnyRzad;
@@ -150,16 +192,31 @@ public class PasekBoczny extends JPanel {
         fireTableCellUpdated(rzad, kolumna);
         }
 
+        /**
+         * Odczytanie klasy w danej kolumnie.
+         * @param kolumna
+         * Kolumna do odczytania.
+         * @return {@link Class} znajdująca się w kolumnie.
+         */
         @Override
         public Class<?> getColumnClass(final int kolumna) {
             return Ruch.class;
         }
 
+        /**
+         * Odczytanie nazwy danej kolumny.
+         * @param kolumna
+         * Kolumna do odczytania.
+         * @return Nazwa danej kolumny.
+         */
         @Override
         public String getColumnName(final int kolumna) {
             return NAZWY[kolumna];
         }
 
+        /**
+         * Wypełnianie tabeli wartościami z {@link PlikRaportu#ruchy}.
+         */
         private void wypelnijTabele() {
             for(int i = 0; i <  PlikRaportu.ruchy.size(); i++) {
                 setValueAt(PlikRaportu.ruchy.get(i).odczytajPoruszonyOddzial().numer, i, 0);
@@ -170,22 +227,41 @@ public class PasekBoczny extends JPanel {
 
     private static class StatyModel extends DefaultTableModel {
 
+        /** Wartości wpisane w tablicę statystyk */
         private final List<Rzad> wartosci;
+        /** Nazwy kolumn tablicy statystyk */
         private static final String[] NAZWY = {"Oddzial", "Zdrowie", "Atak", "Obrona", "Sila"};
 
+        /** Utworzenie pustej listy {@link StatyModel#wartosci} */
         StatyModel() { this.wartosci = new ArrayList<>(); }
 
+        /**
+         * Odczytanie ilości rzędów.
+         * @return Ilość rzędów.
+         */
         @Override
         public int getRowCount() {
             if(this.wartosci == null) return 0;
             return this.wartosci.size();
         }
 
+        /**
+         * Odczytanie ilości kolumn.
+         * @return Ilość kolumn.
+         */
         @Override
         public int getColumnCount() {
             return NAZWY.length;
         }
 
+        /**
+         * Odczytanie wartości w określonym miejscu tabeli statystyk.
+         * @param rzad
+         * rząd w którym znajduje się komórka docelowa
+         * @param kolumna
+         * kolumna w której znajduje się komórka docelowa
+         * @return Wartość znajdująca się w komórce docelowej, lub <code>null</code> jeżeli komórka jest pusta.
+         */
         @Override
         public Object getValueAt(final int rzad, final int kolumna) {
             final Rzad aktualnyRzad = this.wartosci.get(rzad);
@@ -207,6 +283,15 @@ public class PasekBoczny extends JPanel {
             return null;
         }
 
+        /**
+         * Ustawienie wartości w określonym miejscu tabeli statystyk.
+         * @param wartosc
+         * wartość która będzie wpisana w ustaloną komórkę
+         * @param rzad
+         * rząd w którym znajduje się komórka docelowa
+         * @param kolumna
+         * kolumna w której znajduje się komórka docelowa
+         */
         @Override
         public void setValueAt(final Object wartosc, final int rzad, final int kolumna) {
             final Rzad aktualnyRzad;
@@ -234,16 +319,31 @@ public class PasekBoczny extends JPanel {
             fireTableCellUpdated(rzad, kolumna);
         }
 
+        /**
+         * Odczytanie klasy w danej kolumnie.
+         * @param kolumna
+         * Kolumna do odczytania.
+         * @return {@link Class} znajdująca się w kolumnie.
+         */
         @Override
         public Class<?> getColumnClass(final int kolumna) {
             return Ruch.class;
         }
 
+        /**
+         * Odczytanie nazwy danej kolumny.
+         * @param kolumna
+         * Kolumna do odczytania.
+         * @return Nazwa danej kolumny.
+         */
         @Override
         public String getColumnName(final int kolumna) {
             return NAZWY[kolumna];
         }
 
+        /**
+         * Wypełnianie tabeli wartościami z {@link Symulacja#listaOddzialow}.
+         */
         private void wypelnijTabele() {
             for(int i = 0; i < Symulacja.listaOddzialow.size(); i++) {
                 setValueAt(String.valueOf(Symulacja.listaOddzialow.get(i).numer), i, 0);
@@ -255,30 +355,48 @@ public class PasekBoczny extends JPanel {
         }
     }
 
+    /**
+     * Klasa rzędu, używana w {@link LogiModel} oraz {@link StatyModel}.
+     */
     private static class Rzad {
 
+        /** Numer oddziału. */
         private String oddzial;
+        /** Wykonany ruch. */
         private String ruch;
+        /** Wartość zdrowia oddziału. */
         private String zdrowie;
+        /** Wartość ataku oddziału. */
         private String atak;
+        /** Wartość obrony oddziału. */
         private String obrona;
+        /** Wartość siły oddziału. */
         private String sila;
 
-        Rzad() {}
-
+        /** Odczytanie numeru oddziału. */
         public String odczytajOddzial() { return this.oddzial; }
+        /** Odczytanie wykonanego ruchu. */
         public String odczytajRuch() { return this.ruch; }
+        /** Odczytanie wartości zdrowia. */
         public String odczytajZdrowie() { return this.zdrowie; }
+        /** Odczytanie wartości ataku. */
         public String odczytajAtak() { return this.atak; }
+        /** Odczytanie wartości obrony. */
         public String odczytajObrone() { return this.obrona; }
+        /** Odczytanie wartości siły. */
         public String odczytajSile() { return this.sila; }
 
+        /** Ustawienie numeru oddziału. */
         public void ustawOddzial(final String oddzial) { this.oddzial = oddzial; }
+        /** Ustawienie wykonanego ruchu. */
         public void ustawRuch(final String ruch) { this.ruch = ruch; }
+        /** Ustawienie wartości zdrowia. */
         public void ustawZdrowie(final String zdrowie) { this.zdrowie = zdrowie; }
+        /** Ustawienie wartości ataku. */
         public void ustawAtak(final String atak) { this.atak = atak; }
+        /** Ustawienie wartości obrony. */
         public void ustawObrone(final String obrona) { this.obrona = obrona; }
+        /** Ustawienie wartości siły. */
         public void ustawSile(final String sila) { this.sila = sila; }
-
     }
 }

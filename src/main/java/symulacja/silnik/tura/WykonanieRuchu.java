@@ -11,12 +11,19 @@ import symulacja.silnik.oddzialy.Ruch;
 import java.util.ArrayList;
 import java.util.List;
 
-//Przeprowadzenie operacji ruchu - zmiana listy pól i statystyk oddziałów
-
+/**
+ * Przeprowadzenie operacji ruchu - zmiana listy pól i statystyk oddziałów.
+ */
 public class WykonanieRuchu {
 
+    /**
+     * Wygenerowanie nowej listy z {@link Pole} zawierającymi {@link ObiektGranicy}.
+     */
     private static final List<Pole> listaPolGranicy = new ArrayList<>();
 
+    /**
+     * Metoda wykonania ruchu.
+     */
     public static void wykonanieRuchu() {
         for(Dowodca dowodca : Symulacja.listaDowodcow) {
             Mapa.aktualnyDowodca = dowodca;
@@ -31,6 +38,11 @@ public class WykonanieRuchu {
         Dowodca.czyOstatniOddzial();
     }
 
+    /**
+     * Utworzenie nowej {@link Mapa#listaPol} i zamienienie starej na nową.
+     * @param ruch
+     * Wykonanie odpowiednich zmian w statystykach na jego podstawie.
+     */
     private static void zmienMapePoRuchu(final Ruch ruch) {
 
         Pole poczatkowePole = ruch.odczytajPoruszonyOddzial().odczytajPole();
@@ -44,7 +56,7 @@ public class WykonanieRuchu {
                 poczatkowePole.odczytajOddzial().sila = poczatkowePole.odczytajOddzial().sila + 2;
             }
 
-            poczatkowePole = Pole.utworzPole(ruch.odczytajPoruszonyOddzial().odczytajPole().wspolrzedne, ruch.odczytajPoruszonyOddzial().odczytajPole().odczytajObiekt(), ruch.odczytajPoruszonyOddzial());
+            poczatkowePole = new Pole(ruch.odczytajPoruszonyOddzial().odczytajPole().wspolrzedne, ruch.odczytajPoruszonyOddzial().odczytajPole().odczytajObiekt(), ruch.odczytajPoruszonyOddzial());
             docelowePole = poczatkowePole;
         }
         if(ruch.odczytajTypRuchu() == Ruch.TypRuchu.PRZEMIESZCZENIE) {
@@ -55,8 +67,8 @@ public class WykonanieRuchu {
             }
             ruch.odczytajPoruszonyOddzial().sila = ruch.odczytajPoruszonyOddzial().sila - 1;
 
-            poczatkowePole = Pole.utworzPole(ruch.odczytajPoruszonyOddzial().odczytajPole().wspolrzedne, ruch.odczytajPoruszonyOddzial().odczytajPole().odczytajObiekt(), null);
-            docelowePole = Pole.utworzPole(ruch.odczytajDocelowePole().wspolrzedne, ruch.odczytajDocelowePole().odczytajObiekt(), ruch.odczytajPoruszonyOddzial());
+            poczatkowePole = new Pole(ruch.odczytajPoruszonyOddzial().odczytajPole().wspolrzedne, ruch.odczytajPoruszonyOddzial().odczytajPole().odczytajObiekt(), null);
+            docelowePole = new Pole(ruch.odczytajDocelowePole().wspolrzedne, ruch.odczytajDocelowePole().odczytajObiekt(), ruch.odczytajPoruszonyOddzial());
         }
         if(ruch.odczytajTypRuchu() == Ruch.TypRuchu.PRZEJECIE) {
             if(ruch.odczytajPoruszonyOddzial().odczytajTyp() == Oddzial.Typ.PIECHOTA &&
@@ -71,12 +83,12 @@ public class WykonanieRuchu {
             ruch.odczytajPoruszonyOddzial().sila = ruch.odczytajPoruszonyOddzial().sila - 2;
 
             poczatkowePole.odczytajOddzial().przeliczStatystyki(poczatkowePole.odczytajOddzial());
-            poczatkowePole = Pole.utworzPole(ruch.odczytajPoruszonyOddzial().odczytajPole().wspolrzedne, ruch.odczytajPoruszonyOddzial().odczytajPole().odczytajObiekt(), null);
+            poczatkowePole = new Pole(ruch.odczytajPoruszonyOddzial().odczytajPole().wspolrzedne, ruch.odczytajPoruszonyOddzial().odczytajPole().odczytajObiekt(), null);
 
             if(ruch.odczytajDocelowePole().odczytajObiekt().odczytajTyp() == Obiekt.Typ.OBRONA) {
-                docelowePole = Pole.utworzPole(ruch.odczytajDocelowePole().wspolrzedne, ruch.odczytajDocelowePole().odczytajObiekt(), ruch.odczytajPoruszonyOddzial());
+                docelowePole = new Pole(ruch.odczytajDocelowePole().wspolrzedne, ruch.odczytajDocelowePole().odczytajObiekt(), ruch.odczytajPoruszonyOddzial());
             } else {
-                docelowePole = Pole.utworzPole(ruch.odczytajDocelowePole().wspolrzedne, null, ruch.odczytajPoruszonyOddzial());
+                docelowePole = new Pole(ruch.odczytajDocelowePole().wspolrzedne, null, ruch.odczytajPoruszonyOddzial());
             }
         }
         if(ruch.odczytajTypRuchu() == Ruch.TypRuchu.ATAK) {
@@ -97,14 +109,14 @@ public class WykonanieRuchu {
             if(poczatkowePole.odczytajOddzial().zycie <= 0) {
                 poczatkowePole.odczytajOddzial().wyzerujStatystyki();
                 PlikRaportu.oddzialPolegl(poczatkowePole.odczytajOddzial());
-                poczatkowePole = Pole.utworzPole(poczatkowePole.wspolrzedne, poczatkowePole.odczytajObiekt(), null);
-            } else poczatkowePole = Pole.utworzPole(poczatkowePole.wspolrzedne, poczatkowePole.odczytajObiekt(), poczatkowePole.odczytajOddzial());
+                poczatkowePole = new Pole(poczatkowePole.wspolrzedne, poczatkowePole.odczytajObiekt(), null);
+            } else poczatkowePole = new Pole(poczatkowePole.wspolrzedne, poczatkowePole.odczytajObiekt(), poczatkowePole.odczytajOddzial());
 
             if(docelowePole.odczytajOddzial().zycie <= 0) {
                 docelowePole.odczytajOddzial().wyzerujStatystyki();
                 PlikRaportu.oddzialPolegl(docelowePole.odczytajOddzial());
-                docelowePole = Pole.utworzPole(docelowePole.wspolrzedne, docelowePole.odczytajObiekt(), null);
-            } else docelowePole = Pole.utworzPole(docelowePole.wspolrzedne, docelowePole.odczytajObiekt(), docelowePole.odczytajOddzial());
+                docelowePole = new Pole(docelowePole.wspolrzedne, docelowePole.odczytajObiekt(), null);
+            } else docelowePole = new Pole(docelowePole.wspolrzedne, docelowePole.odczytajObiekt(), docelowePole.odczytajOddzial());
         }
 
         for(Pole pole : Mapa.listaPol) {
@@ -121,6 +133,9 @@ public class WykonanieRuchu {
         Mapa.listaPol = nowaListaPol;
     }
 
+    /**
+     * Otoczenie mapy dodatkową warstwą {@link Pole} z {@link ObiektGranicy}.
+     */
     private static void otoczMapeGranica() {
 
         if(Symulacja.odczytajPowtorzenie() % 5 == 0) {
@@ -157,7 +172,7 @@ public class WykonanieRuchu {
                 if(warunek) {
                     for (ObiektGranicy obiektGranicy : Symulacja.listaObiektowGranicy) {
                         if (obiektGranicy.wspolrzedne() == pole.wspolrzedne) {
-                            listaPolGranicy.add(Pole.utworzPole(pole.wspolrzedne, obiektGranicy, null));
+                            listaPolGranicy.add(new Pole(pole.wspolrzedne, obiektGranicy, null));
                         }
                     }
                 }

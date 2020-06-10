@@ -8,15 +8,21 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-//Utworzenie, na podstawie listy zbadanych pól, listy możliwych ruchów
-
+/**
+ * Klasa do obliczania możliwych ruchów.
+ */
 public class Ruch {
 
+    /** {@link Mapa} do której obliczane są ruchy. */
     static Mapa mapa;
+    /** {@link Oddzial} dla którego obliczane są ruchy. */
     final Oddzial poruszonyOddzial;
+    /** {@link Pole} do którego obliczany jest ruch. */
     final Pole docelowePole;
+    /** Typ wykonywanego ruchu, zależny od {@link Pole}. */
     final TypRuchu typRuchu;
 
+    /** Typ wyliczeniowy służący określeniu rodzaju {@link Ruch}. */
     public enum TypRuchu {
         ODPOCZYNEK("ODPOCZYNEK"),
         PRZEMIESZCZENIE("PRZEMIESZCZENIE"),
@@ -29,43 +35,50 @@ public class Ruch {
 
         @Override
         public String toString() { return this.typRuchu; }
-
     }
 
+    /**
+     * Metoda główna klasy {@link Ruch}.
+     * @param mapa
+     * {@link Mapa} do której obliczany jest ruch.
+     * @param poruszonyOddzial
+     * {@link Oddzial} którego ruch jest obliczany.
+     * @param docelowePole
+     * {@link Pole} do którego ruch jest obliczany.
+     * @param typRuchu
+     * {@link TypRuchu} który jest wykonywany.
+     */
     protected Ruch(final Mapa mapa,
                  final Oddzial poruszonyOddzial,
                  final Pole docelowePole,
                  final TypRuchu typRuchu) {
-        symulacja.silnik.oddzialy.Ruch.mapa = mapa;
+        Ruch.mapa = mapa;
         this.poruszonyOddzial = poruszonyOddzial;
         this.docelowePole = docelowePole;
         this.typRuchu = typRuchu;
     }
 
-    public List<symulacja.silnik.oddzialy.Ruch> obliczRuchy(final List<Pole> listaZbadanychPol, final Oddzial poruszonyOddzial) {
-
-        List<symulacja.silnik.oddzialy.Ruch> mozliweRuchy = new ArrayList<>();
-        mozliweRuchy.add(new Odpoczynek(mapa, poruszonyOddzial, poruszonyOddzial.odczytajPole(), TypRuchu.ODPOCZYNEK));
-        for (Pole pole : listaZbadanychPol) {
-            if (pole.odczytajOddzial() != null) {
-                mozliweRuchy.add(new Atak(mapa, poruszonyOddzial, pole, TypRuchu.ATAK));
-                continue;
-            }
-            if (pole.odczytajObiekt() != null) {
-                if (pole.odczytajObiekt().odczytajTyp() != Obiekt.Typ.TEREN && pole.odczytajObiekt().odczytajTyp() != Obiekt.Typ.GRANICA) {
-                    mozliweRuchy.add(new Przejecie(mapa, poruszonyOddzial, pole, TypRuchu.PRZEJECIE));
-                }
-                continue;
-            }
-            mozliweRuchy.add(new Przemieszczenie(mapa, poruszonyOddzial, pole, TypRuchu.PRZEMIESZCZENIE));
-        }
-        return Collections.unmodifiableList(mozliweRuchy);
-    }
-
+    /**
+     * Odczytanie {@link TypRuchu}.
+     * @return {@link TypRuchu}.
+     */
     public TypRuchu odczytajTypRuchu() { return typRuchu; }
+
+    /**
+     * Odczytanie poruszonego {@link Oddzial}.
+     * @return Poruszony {@link Oddzial}.
+     */
     public Oddzial odczytajPoruszonyOddzial() { return poruszonyOddzial; }
+
+    /**
+     * Odczytanie docelowego {@link Pole}.
+     * @return Docelowe {@link Pole}.
+     */
     public Pole odczytajDocelowePole() { return docelowePole; }
 
+    /**
+     * Klasa definiująca {@link TypRuchu#ODPOCZYNEK}.
+     */
     static final class Odpoczynek extends symulacja.silnik.oddzialy.Ruch {
         Odpoczynek(Mapa mapa, Oddzial oddzial, Pole docelowePole, TypRuchu typRuchu) {
             super(mapa, oddzial, docelowePole, typRuchu);
@@ -75,6 +88,9 @@ public class Ruch {
         public String toString() { return TypRuchu.ODPOCZYNEK.toString(); }
     }
 
+    /**
+     * Klasa definiująca {@link TypRuchu#PRZEMIESZCZENIE}.
+     */
     static final class Przemieszczenie extends symulacja.silnik.oddzialy.Ruch {
         Przemieszczenie(Mapa mapa, Oddzial oddzial, Pole docelowePole, TypRuchu typRuchu) {
             super(mapa, oddzial, docelowePole, typRuchu);
@@ -84,8 +100,12 @@ public class Ruch {
         public String toString() { return TypRuchu.PRZEMIESZCZENIE.toString(); }
     }
 
+    /**
+     * Klasa definiująca {@link TypRuchu#PRZEJECIE}.
+     */
     static final class Przejecie extends symulacja.silnik.oddzialy.Ruch {
 
+        /** {@link Obiekt} który jest przejmowany. */
         final Obiekt docelowyObiekt;
 
         Przejecie(Mapa mapa, Oddzial poruszonyOddzial, Pole docelowePole, TypRuchu typRuchu) {
@@ -97,16 +117,20 @@ public class Ruch {
         public String toString() { return TypRuchu.PRZEJECIE.toString(); }
     }
 
+    /**
+     * Klasa definiująca {@link TypRuchu#ATAK}.
+     */
     static final class Atak extends symulacja.silnik.oddzialy.Ruch {
 
-    final Oddzial zaatakowanyOddzial;
+        /** Atakowany {@link Oddzial}. */
+        final Oddzial zaatakowanyOddzial;
 
-    Atak(Mapa mapa, Oddzial poruszonyOddzial, Pole docelowePole, TypRuchu typRuchu) {
-        super(mapa, poruszonyOddzial, docelowePole, typRuchu);
-        this.zaatakowanyOddzial = docelowePole.odczytajOddzial();
-    }
+        Atak(Mapa mapa, Oddzial poruszonyOddzial, Pole docelowePole, TypRuchu typRuchu) {
+            super(mapa, poruszonyOddzial, docelowePole, typRuchu);
+            this.zaatakowanyOddzial = docelowePole.odczytajOddzial();
+        }
 
-    @Override
-    public String toString() { return TypRuchu.ATAK.toString(); }
+        @Override
+        public String toString() { return TypRuchu.ATAK.toString(); }
     }
 }
